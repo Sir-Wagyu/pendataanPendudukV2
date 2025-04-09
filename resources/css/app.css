@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@source "../views";
+
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../../node_modules/flowbite";
+
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@theme {
+    --color-warna-100: #f5f7fa;
+    --color-warna-200: #e3e8ee;
+    --color-warna-300: #4a4a4a;
+    --color-warna-400: #3a6ea5;
+    --color-warna-500: #5a9e8a;
+    --color-warna-600: #4caf50;
+    --color-warna-700: #ffb74d;
+    --color-warna-800: #e57373;
+
+    --font-work-sans: "Work Sans", sans-serif;
+    --font-roboto: "Roboto", sans-serif;
+    --font-urbanist: "Urbanist", sans-serif;
+    --font-raleway: "Raleway", sans-serif;
+    --font-open-sans: "Open Sans", sans-serif;
+}
