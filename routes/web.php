@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Livewire\DataKepalaLingkungan;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,13 +24,19 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['checkRole:admin,kepalaLingkungan'])->group(function () {
         Route::get('/verifikasi-akun', [AuthController::class, 'verifikasiAkun'])->name('verifikasiAkun');
-        Route::post('/verifikasi-akun/ubah-status/{id}', [AuthController::class, 'verifyUser'])->name('ubahStatus');
+        Route::post('/verifikasi-akun/ubah-status/{id}', [AuthController::class, 'verifyUser'])->name(name: 'ubahStatus');
     });
 
     Route::middleware(['checkRole:admin,penanggungJawab,kepalaLingkungan'])->group(function () {
         Route::get('/data-penduduk', function () {
             return view('dashboard.dataPenduduk');
         })->name('dataWargaTerdaftar');
+
+        Route::get('/data-kepala-lingkungan', function () {
+            return view('components.kepala-lingkungan');
+        });
+
+
 
         Route::get('/laporan', function () {
             return view('dashboard.laporan');

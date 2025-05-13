@@ -21,32 +21,42 @@ class AuthController extends Controller
     function registerSubmit(Request $request)
     {
         $request->validate([
+            'username' => 'required|string|max:20|unique:users',
             'name' => 'required|string|max:40',
             'nik' => 'required|string|max:20|unique:users',
             'alamat' => 'required|string|max:50',
             'telepon' => 'required|string|max:15',
             'email' => 'required|email|unique:users',
             'role' => 'required|string',
-            'telepon' => 'required|string',
         ], [
+            'username.required' => 'Username tidak boleh kosong.',
+            'name.required' => 'Nama tidak boleh kosong.',
+            'nik.required' => 'NIK tidak boleh kosong.',
+            'alamat.required' => 'Alamat tidak boleh kosong.',
+            'telepon.required' => 'Telepon tidak boleh kosong.',
+            'email.required' => 'Email tidak boleh kosong.',
+            'role.required' => 'Role tidak boleh kosong.',
+            'username.unique' => 'Username ini sudah terdaftar, silakan gunakan username lain.',
             'email.unique' => 'Email ini sudah terdaftar, silakan gunakan email lain.',
             'nik.unique' => 'NIK ini sudah terdaftar, silakan gunakan NIK lain.',
+
         ]);
 
         $dummyPassword = Str::random(10);
 
         $user = new User();
         $user->name = $request->name;
+        $user->username = $request->username;
         $user->email = $request->email;
         $user->role = $request->role;
         $user->telepon = $request->telepon;
         $user->nik = $request->nik;
         $user->alamat = $request->alamat;
-        $user->is_verified = false;
+        $user->status = 'pending';
         $user->password = Hash::make($dummyPassword);
         $user->save();
 
-        return redirect(route(name: 'login'))->with('success', 'Registrasi berhasil! Mohon tunggu verifikasi admin dalam 1x24 jam.');
+        return redirect(route(name: 'login'))->with('success', 'Registrasi berhasil! Mohon tunggu verifikasi admin dalam 1x24 jam. Kami akan kirimkan password sementara ke email Anda.');
     }
 
     function login()
@@ -56,10 +66,10 @@ class AuthController extends Controller
 
     public function loginSubmit(Request $request)
     {
-        $data = $request->only('email', 'password');
-        if (Auth::attempt(credentials: $data)) {
+        $data = $request->only('username', 'password');
+        if (Auth::attempt(['username' => $data['username'], 'password' => $data['password']])) {
             $user = Auth::user();
-            if ($user->is_verified) {
+            if ($user->status == 'approved') {
                 $request->session()->regenerate();
                 return redirect()->route('dashboardHome');
             } else {
@@ -67,7 +77,7 @@ class AuthController extends Controller
                 return back()->with('error', 'Akun belum diverifikasi oleh admin.');
             }
         } else {
-            return back()->with('error', 'Login Gagal. Email atau password salah');
+            return back()->with('error', 'Login Gagal. NIK atau password salah');
         }
     }
 
@@ -79,23 +89,33 @@ class AuthController extends Controller
 
     function verifikasiAkun()
     {
-        $users = User::where('is_verified', false)->get();
+        $users = User::where('status', 'pending')->get();
         return view('dashboard.verifikasiAkun', compact('users'));
     }
 
-    function verifyUser($id)
+    function verifyUser(Request $request, $id)
     {
+        $request->validate([
+            'status' => 'required|in:approved,rejected',
+        ]);
+
         $user = User::find($id);
-        if (!$user->is_verified) {
+        if ($user && $user->status == 'pending') {
             $newPassword = Str::random(10);
             $user->password = Hash::make($newPassword);
             $user->must_change_password = true;
-            $user->is_verified = true;
+            $user->status = $request->status;
             $user->save();
 
-            Mail::to($user->email)->send(new SendPasswordMail(@$newPassword));
+            Mail::to($user->email)->send(new SendPasswordMail($newPassword));
+
+            $message = $request->status === 'approved'
+                ? 'Akun berhasil disetujui.'
+                : 'Akun berhasil ditolak.';
+
+            return redirect(route('verifikasiAkun'))->with('success', $message);
         }
-        return redirect(route('verifikasiAkun'))->with('success', 'User berhasil diverifikasi.');
+        return redirect(route('verifikasiAkun'))->with('error', 'Akun tidak ditemukan atau sudah diverifikasi sebelumnya.');
     }
 
 

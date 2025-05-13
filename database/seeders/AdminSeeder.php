@@ -15,6 +15,8 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::create([
+            'id' => '10' . str_pad(random_int(0, 99999), 5, '0', STR_PAD_LEFT),
+            'username' => 'admin',
             'nik' => '1234567890123456',
             'name' => 'Super Admin',
             'alamat' => 'Jl. Raya No. 1',
@@ -22,7 +24,7 @@ class AdminSeeder extends Seeder
             'telepon' => '08123456789',
             'role' => 'admin',
             'password' => Hash::make('admin'),
-            'is_verified' => true,
+            'status' => 'approved',
             'must_change_password' => true,
         ]);
     }

@@ -26,8 +26,8 @@
                               <p class="mb-2 text-green-500">{{ session('success') }}</p>
                               @endif
                               <div class="relative mt-6">
-                                    <input type="email" id="email" name="email" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" placeholder=" " required/>
-                                    <label for="email" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Email</label>
+                                    <input type="text" id="username" name="username" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" placeholder=" " required/>
+                                    <label for="username" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Username</label>
                               </div>
                                 <div class="relative mt-6">
                                           <input type="password" id="password" name="password" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" placeholder=" " required/>
@@ -56,7 +56,10 @@
             <img src="/ulunDanu.jpg" alt="Pura Ulun Danu" class="w-full h-full object-cover">
             <div class="w-full h-full absolute top-0 left-0 text-white z-12">
                   <div class="w-full h-full flex flex-col justify-center items-center text-center px-4 xl:w-[70%] mx-auto">
-                        <h1 class="text-3xl lg:text-4xl xl:text-5xl font-bold tracking-wide text-pretty">Sistem Pendataan Penduduk Pendatang</h1>
+                        <h1 class="text-3xl lg:text-4xl xl:text-5xl font-bold tracking-wide text-pretty">SIDUKTANG</h1>
+                        <h2 class="text-xl lg:text-2xl xl:text-3xl  font-semibold tracking-wide text-pretty">Sistem Data Kependudukan Pendatang
+
+                        </h2>
                         <p class="mt-3 lg:mt-6 xl:text-lg text-center">Tertib Administrasi, Kemudahan Pendataan, dan Legalitas Tinggal dalam Satu Sistem</p>
                   </div>
             </div>
@@ -79,3 +82,5 @@
       </script>
 </body>
 </html>
+
+
