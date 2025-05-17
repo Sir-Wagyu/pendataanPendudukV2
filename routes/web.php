@@ -36,8 +36,6 @@ Route::middleware(['auth'])->group(function () {
             return view('components.kepala-lingkungan');
         });
 
-
-
         Route::get('/laporan', function () {
             return view('dashboard.laporan');
         });

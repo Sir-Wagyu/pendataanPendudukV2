@@ -109,11 +109,15 @@ class AuthController extends Controller
 
             Mail::to($user->email)->send(new SendPasswordMail($newPassword));
 
-            $message = $request->status === 'approved'
-                ? 'Akun berhasil disetujui.'
-                : 'Akun berhasil ditolak.';
+            session()->flash('message', [
+                'title' => 'Akun berhasil diverifikasi.',
+                'type' => 'success',
+                'description' => $request->status === 'approved'
+                    ? 'Akun berhasil diverifikasi. Password sementara telah dikirim ke email user.'
+                    : 'Akun berhasil ditolak. User tidak dapat login ke sistem.'
+            ]);
 
-            return redirect(route('verifikasiAkun'))->with('success', $message);
+            return redirect(route('verifikasiAkun'));
         }
         return redirect(route('verifikasiAkun'))->with('error', 'Akun tidak ditemukan atau sudah diverifikasi sebelumnya.');
     }

@@ -18,21 +18,21 @@
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse border border-gray-200 bg-warna-100">
                 <thead class="text-xs text-warna-300 uppercase border-b-2 border-gray-200 ">
                     <tr>
-                        <th scope="col" class="px-10 py-3  whitespace-nowrap  sticky left-0 bg-white  border-r border-warna-200 ">
+                        <th scope="col" class="px-10 py-3  whitespace-nowrap   border-r border-warna-200 ">
                             No
                         </th>
                         <th scope="col"
-                            class="px-10 py-4  whitespace-nowrap  sticky left-23 bg-white border-r border-warna-200">
+                            class="px-10 py-4  whitespace-nowrap   border-r border-warna-200">
                             Nama Lengkap
-                        </th>
-                        <th scope="col" class="px-10 py-3   ">
-                            Status Verifikasi
                         </th>
                         <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
                             NIK
                         </th>
                         <th scope="col" class="px-10 py-4  whitespace-nowrap ">
                             Email
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Telepon
                         </th>
 
                         <th scope="col" class="px-10 py-4  whitespace-nowrap ">
@@ -43,14 +43,14 @@
                 <tbody>
                     <tr class="bg-white border-b text-warna-300 border-gray-200">
                         @forelse ($users as $user)
-                            <td class="px-10 py-3 whitespace-nowrap sticky left-0 bg-white font-medium">
+                            <td class="px-10 py-3 whitespace-nowrap  font-medium">
                                 {{ $loop->iteration }}
                             </td>
-                            <td class="px-10 py-3 whitespace-nowrap sticky left-23 bg-white font-medium">
+                            <td class="px-10 py-3 whitespace-nowrap font-medium">
                                 {{ $user->name }}
                             </td>
-                            <td class="px-10 py-3">
-                                {{ $user->is_verified ? 'Terverifikasi' : 'Belum Terverifikasi' }}
+                            <td class="px-10 py-3 whitespace-nowrap">
+                                {{ $user->nik }}
                             </td>
                             <td class="px-10 py-3 whitespace-nowrap">
                                 {{ $user->email }}
@@ -59,14 +59,27 @@
                                 {{ $user->telepon }}
                             </td>
                             <td class="px-10 py-3 whitespace-nowrap flex flex-col gap-1">
-                                <form action="{{ route('ubahStatus', $user->id) }}" method="POST">
+                                <form
+                                x-data="{ loading: true }"
+                                @submit="loading = true"
+                                action="{{ route('ubahStatus', $user->id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" name="status" value="approved">
-                                        <i class="fa-solid fa-square-check text-3xl text-warna-600 active:scale-95 transition-all mr-1 cursor-pointer"></i>
+                                    <button type="submit" name="status" value="approved" class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                        <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button type="submit" name="status" value="rejected">
-                                        <i class="fa-solid fa-square-xmark text-3xl text-warna-800 active:scale-95 transition-all cursor-pointer"></i>
+                                    <button type="submit" name="status" value="rejected" class="bg-warna-800 hover:bg-warna-800/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                        <i class="fa-solid fa-times"></i>
                                     </button>
+
+                                    <div 
+                                    x-show="loading"
+                                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+                                    >
+                                        <div class="bg-white p-6 rounded shadow text-center">
+                                            <span class="animate-spin text-2xl">&#9696;</span>
+                                            <div class="mt-2">Loading...</div>
+                                        </div>
+                                    </div>
                                 </form>
                             </td>
                         @empty
@@ -78,7 +91,21 @@
                 </tbody>
             </table>
         </div>
-
+        
+        @if(session('message'))
+            <div class="fixed z-40 inset-0 flex items-center justify-center bg-warna-300/50 ">
+                <x-modal class="relative bg-white flex flex-col items-center mx-5 md:mx-0 w-full md:w-1/2 lg:w-[45%] xl:w-[30%] py-7 md:py-10 ">
+                    <i class="absolute -top-12 {{ session('message.type') == 'success' ? 'fa-solid fa-circle-check text-warna-600' : 'fa-solid fa-triangle-exclamation text-warna-800' }} bg-white p-4 rounded-full  text-6xl md:text-7xl xl:text-8xl"></i>
+                    <div class="flex flex-col items-center mt-5 lg:mt-12 mb-8 lg:mb-10">
+                        <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">{{ session('message.title') }}</h2>
+                        <p class="text-center w-3/4">{{ session('message.description') }}</p>
+                    </div>
+                    <div class="flex justify-center w-[90%] ">
+                        <button type="button" @click="open = false" class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-full px-7 py-2 md:py-3 rounded-lg cursor-pointer">OK</button>
+                    </div>
+                </x-modal>     
+            </div>
+        @endif
         <h2 class="font-semibold text-xl text-warna-300 leading-tight mt-10 mb-6">
             Akun Terdaftar
         </h2>

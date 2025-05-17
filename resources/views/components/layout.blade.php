@@ -134,14 +134,14 @@
                     
                     @endif               
                     <li>
-                        <button data-modal-target="popup-modal" data-modal-toggle="popup-modal"
-                        class="w-full flex items-center px-2 py-4 text-warna-800 rounded-lg group hover:bg-warna-200"
-                            data-modal-target="popup-modal" data-modal-toggle="popup-modal">
-                            <svg class="flex-shrink-0 w-5 h-5 text-warna-800 transition duration-75 " aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
-                            </svg>
+                        <button
+                            type="button"
+                            x-data
+                            @click="$dispatch('show-logout-modal')"
+                            class="w-full flex items-center px-2 py-4 text-warna-800 rounded-lg group hover:bg-warna-200"
+                        >
+                            <!-- ...icon dan label... -->
+                            <i class="fa-solid fa-right-from-bracket text-lg"></i>
                             <span class="w-max ms-3 whitespace-nowrap">Log Out</span>
                         </button>
                     </li>
@@ -153,8 +153,8 @@
         <main class="p-4 sm:ml-64">
 
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg mt-14">
-                <div id="popup-modal" tabindex="-1"
-                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                {{-- <div id="popup-modal" tabindex="-1"
+                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  max-h-full ">
                     <div class="relative p-4 w-full max-w-md max-h-full">
                         <div class="relative bg-white rounded-lg shadow">
                             <button type="button"
@@ -167,12 +167,8 @@
                                 </svg>
                                 <span class="sr-only">Close modal</span>
                             </button>
-                            <div class="p-4 md:p-5 text-center">
-                                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                </svg>
+                            <div class="relative p-4 md:p-5 text-center">
+                                <i class="absolute fa-solid fa-circle-exclamation text-gray-500/80 text-7xl mb-5"></i>
                                 <h3 class="mb-5 text-lg font-normal text-gray-500">Apakah anda yakin ingin logout?</h3>
                                 <a href="{{ route('logout') }}" data-modal-hide="popup-modal" type="button"
                                     class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
@@ -183,6 +179,26 @@
                             </div>
                         </div>
                     </div>
+                </div> --}}
+
+                <div 
+                    x-data="{ open: false }"
+                    x-on:show-logout-modal.window="open = true"
+                    x-show="open"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+                    style="display: none;"
+                >
+                    <x-modal class="relative bg-white flex flex-col items-center mx-5 md:mx-0 w-full md:w-1/2 lg:w-[45%] xl:w-[30%] py-7 md:py-10 ">
+                    <i class="absolute -top-12 fa-solid fa-circle-exclamation text-warna-300/50 bg-white p-4 rounded-full  text-6xl md:text-7xl xl:text-8xl"></i>
+                    <div class="flex flex-col items-center mt-5 lg:mt-12 mb-8 lg:mb-10">
+                        <h2 class="text-lg md:text-xl xl:text-2xl text-center font-semibold mb-1 md:mb-2">Apakah anda yakin ingin logout?</h2>
+
+                    </div>
+                    <div class="flex justify-center w-[90%] ">
+                        <button type="button"  @click="open = false" class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer">Tidak</button>
+                        <a href="{{ route('logout') }}" @click="open = false" class="mr-2 text-white bg-warna-800 hover:bg-warna-800/90 active:scale-95 transition-all w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer text-center">Iya</a>
+                    </div>
+                </x-modal>  
                 </div>
 
                 @if(Auth::user()->must_change_password == true)
@@ -206,14 +222,14 @@
                                         <label for="newPassword" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Password Baru</label>
                                         <button type="button" onclick="togglePassword('newPassword', 'eyeIcon1')" class="absolute inset-y-0 right-0 px-3 py-2 text-gray-500 focus:outline-none">
                                             <span id="eyeIcon1"><i class="fa-solid fa-eye"></i></span>
-                                    </button>
+                                        </button>
                                     </div>
                                     <div class="relative mt-6">
                                         <input type="password" id="confirmPassword" name="confirmPassword" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" placeholder=" " required/>
                                         <label for="confirmPassword" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Konfirmasi Password</label>
                                         <button type="button" onclick="togglePassword( 'confirmPassword', 'eyeIcon2')" class="absolute inset-y-0 right-0 px-3 py-2 text-gray-500 focus:outline-none">
                                             <span id="eyeIcon2"><i class="fa-solid fa-eye"></i></span>
-                                    </button>
+                                        </button>
                                     </div>
                                     <button class="mt-8 md:mt-9 px-3 py-2 md:py-3 rounded-md bg-warna-400 hover:bg-warna-400/90 active:scale-95 transition-all text-warna-100 w-full ">Ubah Password</button>
                                 </form>
@@ -272,7 +288,6 @@
             }
         });
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     @livewireScripts
 </body>
