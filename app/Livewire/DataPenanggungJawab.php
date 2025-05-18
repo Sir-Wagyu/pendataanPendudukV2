@@ -5,21 +5,21 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\User;
 
-
-class DataKepalaLingkungan extends Component
+class DataPenanggungJawab extends Component
 {
-    public $user, $name, $alamat, $telepon, $email, $status, $username, $nik, $selectedId;
+    public $user, $name, $email, $paassword, $alamat, $telepon, $role, $status, $nik, $username, $selectedId;
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
     public $isNotificationModal = false;
     public $search = '';
 
+
     public function render()
     {
 
         if ($this->search) {
-            return view('livewire.data-kepala-lingkungan', [
-                'users' => User::where('role', 'kepalaLingkungan')
+            return view('livewire.data-penanggung-jawab', [
+                'users' => User::where('role', 'penanggungJawab')
                     ->where(function ($query) {
                         $query->where('name', 'like', '%' . $this->search . '%')
                             ->orWhere('nik', 'like', '%' . $this->search . '%')
@@ -30,15 +30,15 @@ class DataKepalaLingkungan extends Component
                     ->get(),
             ]);
         }
-
+        
         if (session()->has('message')) {
             $this->isNotificationModal = true;
         } else {
             $this->isNotificationModal = false;
         }
 
-        return view('livewire.data-kepala-lingkungan', [
-            'users' => User::where('role', 'kepalaLingkungan')->get(),
+        return view('livewire.data-penanggung-jawab', [
+            'users' => User::where('role', 'penanggungJawab')->get(),
         ]);
     }
 
@@ -70,13 +70,13 @@ class DataKepalaLingkungan extends Component
         if ($user) {
             $user->delete();
             session()->flash('message', [
-                'title' => 'Data kepala lingkungan berhasil dihapus.',
+                'title' => 'Data Penanggung Jawab berhasil dihapus.',
                 'type' => 'success',
                 'description' => 'Data user dengan nama ' . $user->name . ' telah dihapus dari sistem.'
             ]);
         } else {
             session()->flash('message', [
-                'title' => 'Data kepala lingkungan tidak ditemukan.',
+                'title' => 'Data Penanggung Jawab tidak ditemukan.',
                 'type' => 'error',
                 'description' => 'User dengan ID ' . $this->selectedId . ' tidak ditemukan di sistem.'
             ]);
@@ -127,7 +127,7 @@ class DataKepalaLingkungan extends Component
                 'email' => $this->email,
                 'username' => $this->username,
                 'status' => 'pending',
-                'role' => 'kepalaLingkungan',
+                'role' => 'penanggungJawab',
                 'password' => bcrypt('password'),
             ]);
         }
@@ -135,7 +135,7 @@ class DataKepalaLingkungan extends Component
         session()->flash('message', [
             'title' => $this->selectedId ? 'Data berhasil diupdate.' : 'Data berhasil ditambahkan.',
             'type' => 'success',
-            'description' => $this->selectedId ? 'Data Kepala Lingkungan dengan nama ' . $this->name . ' telah diupdate.' : 'Data Kepala Lingkungan dengan nama ' . $this->name . ' telah ditambahkan.'
+            'description' => $this->selectedId ? 'Data penanggung jawab dengan nama ' . $this->name . ' telah diupdate.' : 'Data penanggung jawab dengan nama ' . $this->name . ' telah ditambahkan.'
         ]);
 
         $this->closeModal();
@@ -153,18 +153,5 @@ class DataKepalaLingkungan extends Component
         $this->username = $user->username;
         $this->nik = $user->nik;
         $this->openModal();
-    }
-
-    public function searchKapling()
-    {
-        $this->users = User::where('role', 'kepalaLingkungan')
-            ->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('nik', 'like', '%' . $this->search . '%')
-                    ->orWhere('alamat', 'like', '%' . $this->search . '%')
-                    ->orWhere('telepon', 'like', '%' . $this->search . '%')
-                    ->orWhere('email', 'like', '%' . $this->search . '%');
-            })
-            ->get();
     }
 }

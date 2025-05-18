@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $query->where('role', 'kepalaLingkungan');
     }
+
+    public function scopePenanggungJawab($query)
+    {
+        return $query->where('role', 'penanggungJawab');
+    }
 }

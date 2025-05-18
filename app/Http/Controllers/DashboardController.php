@@ -8,6 +8,6 @@ class DashboardController extends Controller
 {
     function index()
     {
-        return view('dashboard.home');
+        return view('components.home');
     }
 }

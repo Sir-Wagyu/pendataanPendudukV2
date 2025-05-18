@@ -29,15 +29,19 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['checkRole:admin,penanggungJawab,kepalaLingkungan'])->group(function () {
         Route::get('/data-penduduk', function () {
-            return view('dashboard.dataPenduduk');
+            return view('components.dataPenduduk');
         })->name('dataWargaTerdaftar');
 
         Route::get('/data-kepala-lingkungan', function () {
             return view('components.kepala-lingkungan');
         });
 
+        Route::get('/data-penanggung-jawab', function () {
+            return view('components.penanggung-jawab');
+        });
+
         Route::get('/laporan', function () {
-            return view('dashboard.laporan');
+            return view('components.laporan');
         });
     });
 });

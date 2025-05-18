@@ -27,7 +27,7 @@
             </div>
             <div class="mt-4 md:mt-20 lg:mt-10 w-full">
                   <h1 class="text-3xl xl:text-4xl font-semibold text-center md:text-left">Buat Akun Baru</h1>
-                  <p class="hidden text-sm lg:text-base md:block mt-3 text-center md:text-left">Registrasi bagi Kepala Lingkungan dan warga yang memiliki tanggungan sebagai Penanggung Jawab.</p>
+                  <p class="hidden text-sm lg:text-base md:block mt-3 text-center md:text-left">Registrasi bagi Kepala Lingkungan dan warga yang memiliki tanggungan terhadap warga pendatang.</p>
                   
                   <form action="{{ route('registerSubmit') }}" method="post">
                         @csrf
@@ -68,15 +68,11 @@
                                     </select>
                               </div>
                               @if ($errors->any())
-                              <div class="bg-red-100 text-red-800 px-4 py-2 rounded-md mt-4">
-                                  <ul>
-                                      @foreach ($errors->all() as $error)
-                                          <li>{{ $error }}</li>
-                                      @endforeach
-                                  </ul>
-                              </div>
-                          @endif
-                              <button class="px-3 py-2 md:py-3 rounded-md bg-warna-400 hover:bg-warna-400/90 active:scale-95 transition-all text-warna-100 w-full mt-8">Registrasi</button>
+                                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded-md mt-4 text-center">
+                                          <p>{{ $errors->first() }}</p>
+                                    </div>
+                               @endif
+                              <button class="px-3 py-2 md:py-3 rounded-md bg-warna-400 hover:bg-warna-400/90 active:scale-95 transition-all text-warna-100 w-full {{ $errors->any() ? 'mt-4' : 'mt-8' }}">Registrasi</button>
                                 <p class=" text-sm mt-5 text-center md:text-left">Sudah punya akun? <a href="{{ route('login') }}" class="text-warna-400 underline">Login Sekarang!</a> </p>
                         </div>
                   </form>

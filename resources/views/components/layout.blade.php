@@ -30,7 +30,7 @@
                         </button>
                         
                     </div>
-                    <p class="text-xl font-semibold sm:text-xl whitespace-nowrap text-warna-300">Penduduk Pendatang Desa X</p>
+                    <p class="hidden md:block text-xl font-semibold sm:text-xl whitespace-nowrap text-warna-300">SIDUKTANG Desa X</p>
                     <p class="text-xl font-semibold sm:text-lg whitespace-nowrap text-warna-300">{{ Auth::user()->name }}</p>
                 </div>
             </div>
@@ -91,7 +91,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="" class="flex items-center p-2 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg">
+                                    <a href="/data-penanggung-jawab" class="flex items-center p-2 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg">
                                         <svg class="w-5 h-5 text-warna-300 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z" />
                                             <path d="M10 5a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5Z" />
@@ -189,16 +189,16 @@
                     style="display: none;"
                 >
                     <x-modal class="relative bg-white flex flex-col items-center mx-5 md:mx-0 w-full md:w-1/2 lg:w-[45%] xl:w-[30%] py-7 md:py-10 ">
-                    <i class="absolute -top-12 fa-solid fa-circle-exclamation text-warna-300/50 bg-white p-4 rounded-full  text-6xl md:text-7xl xl:text-8xl"></i>
-                    <div class="flex flex-col items-center mt-5 lg:mt-12 mb-8 lg:mb-10">
-                        <h2 class="text-lg md:text-xl xl:text-2xl text-center font-semibold mb-1 md:mb-2">Apakah anda yakin ingin logout?</h2>
+                        <i class="absolute -top-12 fa-solid fa-circle-exclamation text-warna-300/50 bg-white p-4 rounded-full  text-6xl md:text-7xl xl:text-8xl"></i>
+                        <div class="flex flex-col items-center mt-5 lg:mt-12 mb-8 lg:mb-10">
+                            <h2 class="text-lg md:text-xl xl:text-2xl text-center font-semibold mb-1 md:mb-2">Apakah anda yakin ingin logout?</h2>
 
-                    </div>
-                    <div class="flex justify-center w-[90%] ">
-                        <button type="button"  @click="open = false" class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer">Tidak</button>
-                        <a href="{{ route('logout') }}" @click="open = false" class="mr-2 text-white bg-warna-800 hover:bg-warna-800/90 active:scale-95 transition-all w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer text-center">Iya</a>
-                    </div>
-                </x-modal>  
+                        </div>
+                        <div class="flex justify-center w-[90%] ">
+                            <button type="button"  @click="open = false" class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer">Tidak</button>
+                            <a href="{{ route('logout') }}" @click="open = false" class="mr-2 text-white bg-warna-800 hover:bg-warna-800/90 active:scale-95 transition-all w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer text-center">Iya</a>
+                        </div>
+                    </x-modal>
                 </div>
 
                 @if(Auth::user()->must_change_password == true)

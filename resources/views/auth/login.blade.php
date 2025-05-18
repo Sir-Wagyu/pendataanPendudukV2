@@ -23,7 +23,9 @@
                         @csrf
                         <div class="mt-15">
                               @if(session('success'))
-                              <p class="mb-2 text-green-500">{{ session('success') }}</p>
+                                    <div class="bg-green-100 text-green-500 px-4 py-2 rounded-md mt-4 text-center">
+                                          <p>{{ session('success') }}</p>
+                                    </div>
                               @endif
                               <div class="relative mt-6">
                                     <input type="text" id="username" name="username" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" placeholder=" " required/>

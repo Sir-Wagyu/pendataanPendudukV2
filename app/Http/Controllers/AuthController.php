@@ -29,13 +29,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'role' => 'required|string',
         ], [
-            'username.required' => 'Username tidak boleh kosong.',
-            'name.required' => 'Nama tidak boleh kosong.',
-            'nik.required' => 'NIK tidak boleh kosong.',
-            'alamat.required' => 'Alamat tidak boleh kosong.',
-            'telepon.required' => 'Telepon tidak boleh kosong.',
-            'email.required' => 'Email tidak boleh kosong.',
-            'role.required' => 'Role tidak boleh kosong.',
+            'required' => 'Kolom tidak boleh kosong.',
             'username.unique' => 'Username ini sudah terdaftar, silakan gunakan username lain.',
             'email.unique' => 'Email ini sudah terdaftar, silakan gunakan email lain.',
             'nik.unique' => 'NIK ini sudah terdaftar, silakan gunakan NIK lain.',
@@ -90,7 +84,7 @@ class AuthController extends Controller
     function verifikasiAkun()
     {
         $users = User::where('status', 'pending')->get();
-        return view('dashboard.verifikasiAkun', compact('users'));
+        return view('components.verifikasiAkun', compact('users'));
     }
 
     function verifyUser(Request $request, $id)
