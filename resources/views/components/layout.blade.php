@@ -9,6 +9,14 @@
     @vite('resources/css/app.css')
     @vite([])
     @livewireStyles
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
 </head>
 
 <body class="font-roboto">
@@ -290,6 +298,83 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     @livewireScripts
+
+    <script>
+    function initMap() {
+        var latVal = document.getElementById('lat-value');
+        var lngVal = document.getElementById('lng-value');
+
+        var defaultLat = parseFloat(latVal?.innerText) || -2.5489;
+        var defaultLng = parseFloat(lngVal?.innerText) || 118.0149;
+
+        var mapContainer = document.getElementById('map');
+        if (!mapContainer) return;
+
+        // Reset Leaflet instance if needed
+        if (mapContainer._leaflet_id) {
+            mapContainer._leaflet_id = null;
+        }
+
+        var map = L.map('map').setView([defaultLat, defaultLng], 5);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        var marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+        marker.on('dragend', function (e) {
+            var latlng = marker.getLatLng();
+            latVal.innerText = latlng.lat;
+            lngVal.innerText = latlng.lng;
+            Livewire.dispatch('setMapLocation', { lat: latlng.lat, lng: latlng.lng });
+        });
+
+        map.on('click', function (e) {
+            marker.setLatLng(e.latlng);
+            latVal.innerText = e.latlng.lat;
+            lngVal.innerText = e.latlng.lng;
+            Livewire.dispatch('setMapLocation', { lat: e.latlng.lat, lng: e.latlng.lng });
+        });
+
+        // Paksa resize ulang agar muncul
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 200);
+    }
+
+    // Livewire 3: jalankan initMap setelah DOM update
+    document.addEventListener("livewire:navigated", () => {
+        // ini akan jalan saat navigasi antar komponen Livewire (kalau pakai navigasi SPA)
+        setTimeout(() => {
+            initMap();
+        }, 300);
+    });
+
+
+
+Livewire.on('modalUploadOpened', () => {
+    console.log('📡 Event modalUploadOpened diterima');
+
+    let attempts = 0;
+    let interval = setInterval(() => {
+        let mapContainer = document.getElementById('map');
+
+        if (mapContainer) {
+            clearInterval(interval);
+            initMap();
+        } else {
+            attempts++;
+            if (attempts > 10) {
+                clearInterval(interval);
+            }
+        }
+    }, 300); // cek tiap 300ms sampai max 10x
+});
+
+
+</script>
 </body>
 
 </html>

@@ -30,7 +30,7 @@ class DataPenanggungJawab extends Component
                     ->get(),
             ]);
         }
-        
+
         if (session()->has('message')) {
             $this->isNotificationModal = true;
         } else {

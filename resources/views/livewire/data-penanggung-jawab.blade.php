@@ -6,15 +6,15 @@
     </div>
 
      <div class="mb-4 flex justify-between items-center">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari..." class="px-4 py-2 border border-gray-300 rounded-lg">
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari..." class="px-4 py-2 border border-gray-300 rounded-lg">
 
-             <button data-tooltip-target='tooltip-bottom' data-tooltip-placement="bottom" type="button" wire:click="openModal" class="w-9 md:w-11 h-9 md:h-11 bg-warna-500 rounded-lg flex justify-center items-center text-white shadow-lg hover:bg-warna-500/80 active:scale-95 transition-all cursor-pointer"><i class="fa-solid fa-user-plus md:text-lg "></i></button>
+            <button data-tooltip-target='tooltip-bottom' data-tooltip-placement="bottom" type="button" wire:click="openModal" class="w-9 md:w-11 h-9 md:h-11 bg-warna-500 rounded-lg flex justify-center items-center text-white shadow-lg hover:bg-warna-500/80 active:scale-95 transition-all cursor-pointer"><i class="fa-solid fa-user-plus md:text-lg "></i></button>
 
-            <div id="tooltip-bottom" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                Tambah Data
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
+        <div id="tooltip-bottom" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+            Tambah Data
+            <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
+    </div>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table
