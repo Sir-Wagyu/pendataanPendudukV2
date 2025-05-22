@@ -76,12 +76,18 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{ route('verifikasiPenduduk') }}"
+                                class="{{ request()->is('verifikasi-penduduk') ? 'bg-warna-400/30 text-warna-300' : '' }} flex items-center px-2 py-4 text-warna-300 hover:bg-warna-400/35 hover:text-warna-300 group rounded-lg ">
+                                <i class="fa-solid fa-user-check"></i>
+                                
+                            <span class="flex-1 ms-3 whitespace-nowrap">
+                                Verifikasi Penduduk
+                            </a>
+                        </li>
+                        <li>
                             <button id="dropDownButton" class="w-full flex justify-between items-center px-2 py-4  text-warna-300 hover:bg-warna-400/35 hover:text-warna-300 group rounded-lg">
                                 <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-warna-300 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z" />
-                                        <path d="M10 5a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5Z" />
-                                    </svg>
+                                    <i class="fa-solid fa-unlock"></i>
                                     <span class="flex-1 ms-3 whitespace-nowrap">Master Data</span>
                                 </div>
                                 <svg class="w-4 h-4 ml-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -161,33 +167,6 @@
         <main class="p-4 sm:ml-64">
 
             <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg mt-14">
-                {{-- <div id="popup-modal" tabindex="-1"
-                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0  max-h-full ">
-                    <div class="relative p-4 w-full max-w-md max-h-full">
-                        <div class="relative bg-white rounded-lg shadow">
-                            <button type="button"
-                                class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-                                data-modal-hide="popup-modal">
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                </svg>
-                                <span class="sr-only">Close modal</span>
-                            </button>
-                            <div class="relative p-4 md:p-5 text-center">
-                                <i class="absolute fa-solid fa-circle-exclamation text-gray-500/80 text-7xl mb-5"></i>
-                                <h3 class="mb-5 text-lg font-normal text-gray-500">Apakah anda yakin ingin logout?</h3>
-                                <a href="{{ route('logout') }}" data-modal-hide="popup-modal" type="button"
-                                    class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                                    Iya
-                                </a>
-                                <button data-modal-hide="popup-modal" type="button"
-                                    class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100">Tidak</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
 
                 <div 
                     x-data="{ open: false }"
@@ -338,39 +317,13 @@
             Livewire.dispatch('setMapLocation', { lat: e.latlng.lat, lng: e.latlng.lng });
         });
 
-        // Paksa resize ulang agar muncul
-        setTimeout(() => {
-            map.invalidateSize();
-        }, 200);
     }
-
-    // Livewire 3: jalankan initMap setelah DOM update
-    document.addEventListener("livewire:navigated", () => {
-        // ini akan jalan saat navigasi antar komponen Livewire (kalau pakai navigasi SPA)
-        setTimeout(() => {
-            initMap();
-        }, 300);
-    });
-
 
 
 Livewire.on('modalUploadOpened', () => {
-    console.log('📡 Event modalUploadOpened diterima');
-
-    let attempts = 0;
-    let interval = setInterval(() => {
-        let mapContainer = document.getElementById('map');
-
-        if (mapContainer) {
-            clearInterval(interval);
-            initMap();
-        } else {
-            attempts++;
-            if (attempts > 10) {
-                clearInterval(interval);
-            }
-        }
-    }, 300); // cek tiap 300ms sampai max 10x
+    setTimeout(() => {
+        initMap();
+    }, 800); // Ubah jadi 800ms untuk memastikan modal sudah muncul
 });
 
 

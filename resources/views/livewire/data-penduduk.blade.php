@@ -52,13 +52,43 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach ($penduduk as $penduduk)
+                    <tr class="border-t-2 bg-white border-b text-warna-300 border-gray-200 xxl:hover:bg-gray-100">
+                        <td class="px-5 py-2 md:px-10 md:py-3  whitespace-nowrap    ">{{ $penduduk->id }}</td>
+                        <td class="px-10 py-3  whitespace-nowrap  ">{{ $penduduk->nama_lengkap }}</td>
+                        <td class="px-10 py-3  whitespace-nowrap  ">{{ $penduduk->nik }}</td>
+                        <td class="px-10 py-3  whitespace-nowrap ">{{ $penduduk->tanggal_masuk }}</td>
+                        <td class="px-10 py-3  whitespace-nowrap ">
+                            @if($penduduk->status_akun == 'ditolak')
+                                <span class="text-warna-800 font-semibold">Ditolak</span>
+                            @elseif($penduduk->status_akun == 'diterima')
+                                <span class="text-warna-600 font-semibold">Diterima</span>
+                            @else
+                                <span class="text-warna-700 font-semibold">Menunggu</span>
+                            @endif
+                        </td>
+                        <td class="px-10 py-3  whitespace-nowrap ">
+                            @if( $penduduk->alasan_penolakan )
+                                <span class="text-red-500 font-semibold">{{ $penduduk->alasan_penolakan }}</span>
+                            @else
+                                <span class="text-gray-500">-</span>
+                            @endif
+                        </td>
+                        <td class="px-10 py-3  whitespace-nowrap ">
+                                <button type="button" wire:click="openDetailModal({{ $penduduk->id }})" class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer"><i class="fa-solid fa-eye "></i></button>
+
+                        </td>
+                    </tr>
+                @endforeach
                 
             </tbody>
         </table>
+
+        
     </div>
 
            
-@if ($isModalUploadOpen === true)
+    @if ($isModalUploadOpen === true)
         <div class="fixed z-50 inset-0 flex items-center justify-center bg-warna-300/50 ">
             <x-modal class="bg-white w-[90%] lg:w-[80%] px-5 md:px-10 lg:px-13 py-8 ">
                 <h2 class="text-lg lg:text-xl font-bold mb-10">Tambah Data Penduduk</h2>
@@ -83,8 +113,8 @@
                                         </button>
 
                                         @if($isPreviewKtpOpen)
-                                        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                                            <div class="bg-white rounded-lg shadow-lg p-3 md:p-6 relative max-w-md w-[90%] md:w-full">
+                                        <div class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50">
+                                            <div class="bg-white rounded-lg shadow-lg p-3 md:p-6 relative max-w-2xl w-[90%] md:w-full">
                                                 <button type="button" wire:click="$set('isPreviewKtpOpen', false)" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
                                                 <img src="{{ $foto_ktp->temporaryUrl() }}" alt="Preview Foto KTP" class="max-h-126 w-auto mx-auto rounded shadow" />
                                             </div>
@@ -127,8 +157,8 @@
                                         </button>
 
                                         @if($isPreviewSelfieKtpOpen)
-                                        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                                            <div class="bg-white rounded-lg shadow-lg p-3 md:p-6 relative max-w-md w-[90%] md:w-full">
+                                        <div class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50">
+                                            <div class="bg-white rounded-lg shadow-lg p-3 md:p-6 relative max-w-2xl w-[90%] md:w-full">
                                                 <button type="button" wire:click="$set('isPreviewSelfieKtpOpen', false)" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-3xl">&times;</button>
                                                 <img src="{{ $foto_selfie_ktp->temporaryUrl() }}" alt="Preview Foto KTP" class="max-h-126 w-auto mx-auto rounded shadow" />
                                             </div>
@@ -205,9 +235,13 @@
                                         wire:model="status_perkawinan" 
                                         :error="$errors->first('status_perkawinan')" 
                                         class="mt-6 md:mt-7"
-                                        :options="['Kawin' => 'Kawin', 'Belum Kawin' => 'Belum Kawin']"
+                                        :options="[
+                                            'kawin' => 'Kawin',
+                                            'belum_kawin' => 'Belum Kawin',
+                                            'cerai' => 'Cerai'
+                                        ]"
                                     />
-                                
+
                                 <div class="mt-6 md:mt-7 relative">
                                     <label for="provinsi_asal" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Provinsi Asal</label>
                                     <select id="provinsi_asal" name="provinsi_asal" wire:model.live="provinsi_asal" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer">
@@ -254,25 +288,40 @@
                                     <x-g-input type="number" name="rw_asal" label="RW" wireModel="rw_asal" :error="$errors->first('rw_asal')" size='w-1/2'/>
                                 </div>
 
-                                <x-g-input name="alamat_asal" label="Alamat Asal" wireModel="alamat_asal" :error="$errors->first('alamat_asal')" class="mt-6 md:mt-7"/>
+                                <x-g-input type="textarea" name="alamat_asal" label="Alamat Asal" wireModel="alamat_asal" :error="$errors->first('alamat_asal')" class="mt-6 md:mt-7" rows="2"/>
 
-                                <x-g-input name="tanggal_masuk" label="Tanggal Masuk" wireModel="tanggal_masuk" :error="$errors->first('tanggal_masuk')" class="mt-6 md:mt-7"/>
                                 </div>
 
                                 <div class="w-full lg:w-1/2 mt-6 md:mt-7 lg:mt-0">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Lokasi di Map</label>
-                                        <div id="map" style="height: 300px; border-radius: 8px;" wire:ignore></div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Lokasi Tempat Tinggal Saat ini Di Map</label>
+                                        <div id="map" class="z-0 h-[300px] rounded-md" wire:ignore></div>
                                         <div class="mt-2 text-xs text-gray-500 hidden">
                                             Latitude: <span id="lat-value">{{ $latitude }}</span>,
                                             Longitude: <span id="lng-value">{{ $longitude }}</span>
                                         </div>
-                                        <div class="flex w-full gap-3 mt-5 md:mt-6">
+                                        
+                                    </div>
+                                    <div class="flex w-full gap-3 mt-5 md:mt-6 lg:mt-9">
                                             <x-g-input type="number" name="latitude" label="Latitude" wireModel="latitude" :error="$errors->first('latitude')" class="w-1/2" disabled/>
                                                 <x-g-input type="number" name="longitude" label="Longitude" wireModel="longitude" :error="$errors->first('longitude')" class="w-1/2" disabled/>
                                         </div>
-                                    </div>
+                                    <x-g-input type="textarea" name="alamat_sekarang" label="Alamat Domisili" wireModel="alamat_sekarang" :error="$errors->first('alamat_sekarang')" class="mt-6 md:mt-7" rows="2"/>
+                                    <x-g-input type="textarea" name="tujuan" label="Tujuan Kedatangan" wireModel="tujuan" :error="$errors->first('tujuan')" class="mt-6 md:mt-7" rows="5"/>
+                                    <x-g-input type="date" name="tanggal_masuk" label="Tanggal Kedatangan" wireModel="tanggal_masuk" :error="$errors->first('tanggal_masuk')" class="mt-6 md:mt-7"/>
+                                    <x-g-input type="date" name="tanggal_keluar" label="Tanggal Kepergian (Optional)" wireModel="tanggal_keluar" :error="$errors->first('tanggal_keluar')" class="mt-6 md:mt-7"/>
 
+                                    <x-g-input 
+                                            type="select" 
+                                            name="id_kepalaLingkungan" 
+                                            label="Kepala Lingkungan" 
+                                            wire:model="id_kepalaLingkungan" 
+                                            :error="$errors->first('id_kepalaLingkungan')" 
+                                            class="mt-6 md:mt-7"
+                                            :options="$kepalaLingkungan->pluck('name', 'id')->toArray()"
+                                        />
+
+                                        <input type="number" name="id_penanggungJawab" wire:model="id_penanggungJawab" class="hidden" value="{{ auth()->user()->id }}">
                                 </div>
                             </div>
                         </div>
@@ -291,17 +340,29 @@
                             class="w-max py-3 px-10 bg-warna-500 text-white rounded-lg hover:bg-warna-600 transition-all disabled:bg-gray-300 disabled:text-gray-400" 
                             @if(!$foto_ktp || !$foto_selfie_ktp) disabled @endif
                         >
-                            Lanjut
+                            Tambah Data
                         </button>
                     </div>
                 </form>
             </x-modal>
         </div>
+    @endif
 
- 
+    @if($isNotificationModal)
+        <div class="fixed z-50 inset-0 flex items-center justify-center bg-warna-300/50 ">
+            <x-modal class="relative bg-white flex flex-col items-center mx-5 md:mx-0 w-full md:w-1/2 lg:w-[45%] xl:w-[30%] py-7 md:py-10 ">
+                <i class="absolute -top-12 {{ session('message.type') == 'success' ? 'fa-solid fa-circle-check text-warna-600' : 'fa-solid fa-triangle-exclamation text-warna-800' }} bg-white p-4 rounded-full  text-6xl md:text-7xl xl:text-8xl"></i>
+                <div class="flex flex-col items-center mt-5 lg:mt-12 mb-8 lg:mb-10">
+                    <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">{{ session('message.title') }}</h2>
+                    <p class="text-center w-3/4">{{ session('message.description') }}</p>
+                </div>
+                <div class="flex justify-center w-[90%] ">
+                    <button type="button" wire:click="closeDeleteModal" class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-full px-7 py-2 md:py-3 rounded-lg cursor-pointer">OK</button>
+                </div>
+            </x-modal>     
+        </div>
+    @endif
 
-        @endif
 
-  
 
 </div>

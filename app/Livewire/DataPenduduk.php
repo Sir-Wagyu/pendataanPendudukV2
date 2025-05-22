@@ -6,6 +6,8 @@ use Livewire\WithFileUploads;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
+
 
 use App\Models\penduduk_pendatang;
 
@@ -30,6 +32,7 @@ class DataPenduduk extends Component
     public $kecamatanOptions = [];
     public $kelurahanOptions = [];
 
+
     public $foto_ktp,
         $foto_selfie_ktp,
         $nik = '',
@@ -46,9 +49,10 @@ class DataPenduduk extends Component
         $alamat_sekarang = '',
         $tujuan = '',
         $tanggal_masuk = '',
-        $tanggal_keluar = '';
+        $tanggal_keluar = '',
+        $id_kepalaLingkungan = '';
 
-    public $id_penanggungJawab, $id_kepalaLingkungan, $status_akun, $alasan_penolakan;
+    public $id_penanggungJawab, $status_akun, $alasan_penolakan;
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
     public $isNotificationModal = false;
@@ -61,11 +65,30 @@ class DataPenduduk extends Component
     public $isPreviewSelfieKtpOpen = false;
 
 
+
     public function render()
     {
         $this->dispatch('initMap');
+
+        if ($this->search) {
+            return view('livewire.data-penduduk', [
+                'penduduk' => penduduk_pendatang::where('nik', 'like', '%' . $this->search . '%')
+                    ->orWhere('nama_lengkap', 'like', '%' . $this->search . '%')
+                    ->orWhere('alamat_asal', 'like', '%' . $this->search . '%')
+                    ->orWhere('telepon', 'like', '%' . $this->search . '%')
+                    ->get(),
+            ]);
+        }
+
+        if (session()->has('message')) {
+            $this->isNotificationModal = true;
+        } else {
+            $this->isNotificationModal = false;
+        }
+
         return view('livewire.data-penduduk', [
-            'dataPenduduk' => penduduk_pendatang::all(),
+            'penduduk' => penduduk_pendatang::all(),
+            'kepalaLingkungan' => User::where('role', 'kepalaLingkungan')->get(),
         ]);
     }
 
@@ -180,19 +203,6 @@ class DataPenduduk extends Component
     }
 
 
-
-    public function simpan()
-    {
-        // $this->validate();
-        // $this->photo->store('photos', 'public');
-        // $this->photo = null;  // reset
-        // $this->iteration++;
-
-        // session()->flash('success', 'Photo saved successfully!');
-
-        dd(request()->all());
-    }
-
     public function resetInputFields()
     {
         $this->nik = '';
@@ -234,6 +244,7 @@ class DataPenduduk extends Component
         $this->resetInputFields();
     }
 
+
     public function uploadFotoKTP()
     {
         $this->validate([
@@ -251,52 +262,45 @@ class DataPenduduk extends Component
         $this->isModalFormOpen = true;
     }
 
-    public function save()
+    public function simpan()
     {
         $this->validate([
-            'id_penanggungJawab' => 'required',
-            'id_kepalaLingkungan' => 'required',
-            'foto_ktp' => 'required|image|max:2048',
-            'foto_selfie_ktp' => 'required|image|max:2048',
-            'status_akun' => 'required',
-            'alasan_penolakan' => 'required',
-            'nik' => 'required|unique:penduduk_pendatang,nik',
-            'nama_lengkap' => 'required',
-            'telepon'   => 'required',
-            'status_perkawinan' => 'required',
-            'jenis_kelamin' => 'required',
-            'tempat_lahir' => 'required',
-            'tanggal_lahir' => 'required',
-            'golongan_darah' => 'required',
-            'agama' => 'required',
-            'provinsi_asal' => 'required',
-            'kabupaten_asal' => 'required',
-            'kecamatan_asal' => 'required',
-            'kelurahan_asal' => 'required',
-            'rw_asal' => 'required',
-            'rt_asal' => 'required',
-            'alamat_asal' => 'required',
-            'alamat_sekarang' => 'required',
+            'nik' => 'required|numeric|digits:16|unique:penduduk_pendatang,nik',
+            'nama_lengkap' => 'required|string|max:255',
+            'telepon' => 'nullable|string|max:20',
+            'status_perkawinan' => 'required|string',
+            'jenis_kelamin' => 'required|string',
+            'tempat_lahir' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date',
+            'golongan_darah' => 'nullable|string|max:3',
+            'agama' => 'required|string|max:50',
+            'provinsi_asal' => 'required|string',
+            'kabupaten_asal' => 'required|string',
+            'kecamatan_asal' => 'required|string',
+            'kelurahan_asal' => 'required|string',
+            'rw_asal' => 'nullable|string|max:5',
+            'rt_asal' => 'nullable|string|max:5',
+            'alamat_asal' => 'required|string|max:255',
+            'alamat_sekarang' => 'required|string|max:255',
             'latitude' => 'required',
             'longitude' => 'required',
-            'tujuan' => 'required',
-            'tanggal_masuk' => 'required',
-            'tanggal_keluar' => 'required',
+            'tujuan' => 'required|string|max:255',
+            'tanggal_masuk' => 'required|date',
+            'tanggal_keluar' => 'nullable|date|after_or_equal:tanggal_masuk',
+            'foto_ktp' => 'required|image|max:2048',
+            'foto_selfie_ktp' => 'required|image|max:2048',
+            'id_kepalaLingkungan' => 'required|exists:users,id',
         ]);
 
-        $path = $this->foto_ktp->store('image.ktp', 'public');
-        $path2 = $this->foto_selfie_ktp->store('image.selfie', 'public');
+
+
+        $ktpPath = $this->foto_ktp->store('ktp', 'public');
+        $selfiePath = $this->foto_selfie_ktp->store('selfie_ktp', 'public');
 
         penduduk_pendatang::create([
-            'id_penanggungJawab' => $this->id_penanggungJawab,
-            'id_kepalaLingkungan' => $this->id_kepalaLingkungan,
-            'foto_ktp' => $path,
-            'foto_selfie_ktp' => $path2,
-            'status_akun' => 'pending',
-            'alasan_penolakan' => '',
             'nik' => $this->nik,
             'nama_lengkap' => $this->nama_lengkap,
-            'telepon'   => $this->telepon,
+            'telepon' => $this->telepon,
             'status_perkawinan' => $this->status_perkawinan,
             'jenis_kelamin' => $this->jenis_kelamin,
             'tempat_lahir' => $this->tempat_lahir,
@@ -307,20 +311,30 @@ class DataPenduduk extends Component
             'kabupaten_asal' => $this->kabupaten_asal,
             'kecamatan_asal' => $this->kecamatan_asal,
             'kelurahan_asal' => $this->kelurahan_asal,
-            'rw_asal' => $this->rw_asal,
-            'rt_asal' => $this->rt_asal,
+            'rw_asal' => $this->rw_asal ?? '000',
+            'rt_asal' => $this->rt_asal ?? '000',
             'alamat_asal' => $this->alamat_asal,
             'alamat_sekarang' => $this->alamat_sekarang,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'tujuan' => $this->tujuan,
             'tanggal_masuk' => $this->tanggal_masuk,
-            'tanggal_keluar' => $this->tanggal_keluar
+            'tanggal_keluar' => $this->tanggal_keluar,
+            'foto_ktp' => $ktpPath,
+            'foto_selfie_ktp' => $selfiePath,
+            'id_kepalaLingkungan' => $this->id_kepalaLingkungan,
+            'status_akun' => 'pending',
+            'id_penanggungJawab' => \Illuminate\Support\Facades\Auth::id(),
+            'alasan_penolakan' => null,
         ]);
-        $this->reset(['isModalFormOpen', 'isModalUploadOpen', 'foto_ktp', 'foto_selfie_ktp']);
-        $this->dispatchBrowserEvent('alert', [
+
+        $this->closeUploadModal();
+        session()->flash('message', [
+            'title' => 'Data penduduk pendatang berhasil disimpan.',
             'type' => 'success',
-            'message' => 'Data berhasil ditambahkan.'
+            'description' => 'Data penduduk pendatang dengan NIK ' . $this->nik . ' telah disimpan.'
         ]);
+
+        $this->resetInputFields();
     }
 }

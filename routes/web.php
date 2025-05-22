@@ -32,6 +32,10 @@ Route::middleware(['auth'])->group(function () {
             return view('components.dataPenduduk');
         })->name('dataWargaTerdaftar');
 
+        Route::get('/verifikasi-penduduk', function () {
+            return view('components.verifikasi-penduduk');
+        })->name('verifikasiPenduduk');
+
         Route::get('/data-kepala-lingkungan', function () {
             return view('components.kepala-lingkungan');
         });
