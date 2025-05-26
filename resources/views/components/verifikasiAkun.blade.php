@@ -41,8 +41,8 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse ($users as $user)
                     <tr class="bg-white border-b text-warna-300 border-gray-200">
-                        @forelse ($users as $user)
                             <td class="px-10 py-3 whitespace-nowrap  font-medium">
                                 {{ $loop->iteration }}
                             </td>
@@ -77,10 +77,10 @@
                             </td>
                         @empty
                             <td colspan="6" class="px-10 py-3 text-base text-center text-gray-500">
-                                Tidak ada data yang tersedia
+                                Tidak ada data akun yang perlu diverifikasi
                             </td>
+                        </tr>
                         @endforelse
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -121,6 +121,69 @@
         <h2 class="font-semibold text-xl text-warna-300 leading-tight mt-10 mb-6">
             Akun Terdaftar
         </h2>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table
+                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse border border-gray-200 bg-warna-100">
+                <thead class="text-xs text-warna-300 uppercase border-b-2 border-gray-200 ">
+                    <tr>
+                        <th scope="col" class="px-10 py-3  whitespace-nowrap   border-r border-warna-200 ">
+                            No
+                        </th>
+                        <th scope="col"
+                            class="px-10 py-4  whitespace-nowrap   border-r border-warna-200">
+                            Nama Lengkap
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
+                            NIK
+                        </th>
+                        <th scope="col"
+                            class="px-10 py-4  whitespace-nowrap   border-r border-warna-200">
+                            Username
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Email
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Role
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($accounts as $account)
+                    <tr class="bg-white border-b text-warna-300 border-gray-200">
+                            <td class="px-10 py-3 whitespace-nowrap  font-medium">
+                                {{ $loop->iteration }}
+                            </td>
+                            <td class="px-10 py-3 whitespace-nowrap font-medium">
+                                {{ $account->name }}
+                            </td>
+                            <td class="px-10 py-3 whitespace-nowrap">
+                                {{ $account->nik }}
+                            </td>
+                            <td class="px-10 py-3 whitespace-nowrap font-medium">
+                                {{ $account->username }}
+                            </td>
+                            <td class="px-10 py-3 whitespace-nowrap">
+                                {{ $account->email }}
+                            </td>
+                            <td class="px-10 py-3 whitespace-nowrap flex flex-col gap-1">
+                                @if ($account->role == 'kepalaLingkungan')
+                                    <p>Kepala Lingkungan</p>
+                                @elseif ($account->role == 'penanggungJawab')
+                                    <p>Penanggung Jawab</p>
+                                @else
+                                    <p>Unknown</p>
+                                @endif
+                            </td>
+                        @empty
+                            <td colspan="6" class="px-10 py-3 text-base text-center text-gray-500">
+                                Tidak ada data akun yang perlu diverifikasi
+                            </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
         <script>
             const form = document.getElementById('verifikasiForm');

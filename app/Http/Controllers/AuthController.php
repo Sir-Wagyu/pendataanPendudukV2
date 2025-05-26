@@ -84,7 +84,8 @@ class AuthController extends Controller
     function verifikasiAkun()
     {
         $users = User::where('status', 'pending')->get();
-        return view('components.verifikasiAkun', compact('users'));
+        $accounts = User::where('role', '!=', 'admin')->get();
+        return view('components.verifikasiAkun', compact('users', 'accounts'));
     }
 
     function verifyUser(Request $request, $id)

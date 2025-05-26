@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('telepon');
             $table->string('email')->unique();
             $table->enum('role', ['penanggungJawab', 'kepalaLingkungan', 'admin']);
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'nonactive'])->default('pending');
             $table->boolean('must_change_password')->default(false);
             $table->string('password');
             $table->rememberToken();

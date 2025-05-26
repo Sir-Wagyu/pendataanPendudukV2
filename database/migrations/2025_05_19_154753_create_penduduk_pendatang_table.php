@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_penanggungJawab');
             $table->unsignedBigInteger('id_kepalaLingkungan');
-            $table->enum('status_akun', ['pending', 'diterima', 'ditolak'])->default('pending');
+            $table->enum('status_akun', ['pending', 'diterima', 'ditolak', 'keluar', 'ulangi'])->default('pending');
             $table->text('alasan_penolakan')->nullable();
             $table->string('foto_ktp');
             $table->string('foto_selfie_ktp');

@@ -14,6 +14,7 @@
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
 
+     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
      crossorigin=""></script>
@@ -39,7 +40,18 @@
                         
                     </div>
                     <p class="hidden md:block text-xl font-semibold sm:text-xl whitespace-nowrap text-warna-300">SIDUKTANG Desa X</p>
-                    <p class="text-xl font-semibold sm:text-lg whitespace-nowrap text-warna-300">{{ Auth::user()->name }}</p>
+                    <div class="flex flex-col">
+                        <p class="text-end text-xl font-semibold sm:text-lg whitespace-nowrap text-warna-300">{{ Auth::user()->name }}</p>
+                        <p class="text-end text-sm whitespace-nowrap text-warna-300">
+                            @if(Auth::user()->role == 'admin')
+                                Admin
+                            @elseif(Auth::user()->role == 'kepalaLingkungan')
+                                Kepala Lingkungan
+                            @else
+                            Penanggung Jawab
+                            @endif
+                        </p>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -63,18 +75,22 @@
                             <span class="ms-3">Dashboard</span>
                         </a>
                     </li>
-                    @if (Auth::user()->role == 'admin')     
-                        <li>
-                            <a href="{{ route('verifikasiAkun') }}"
-                                class="{{ request()->is('verifikasi-akun') ? 'bg-warna-400/30 text-warna-300' : '' }} flex items-center px-2 py-4 text-warna-300 hover:bg-warna-400/35 hover:text-warna-300 group rounded-lg ">
-                                <svg class=" w-5 h-5 text-warna-300 transition duration-75 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                    <path fill-rule="evenodd" d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z" clip-rule="evenodd"/>
-                                </svg>
-                                
-                            <span class="flex-1 ms-3 whitespace-nowrap">
-                                Verifikasi Akun
-                            </a>
-                        </li>
+                    @if (Auth::user()->role == 'admin' || Auth::user()->role == 'kepalaLingkungan' || Auth::user()->role == 'penanggungJawab') 
+
+                        @if(Auth::user()->role == 'admin')
+                            <li>
+                                <a href="{{ route('verifikasiAkun') }}"
+                                    class="{{ request()->is('verifikasi-akun') ? 'bg-warna-400/30 text-warna-300' : '' }} flex items-center px-2 py-4 text-warna-300 hover:bg-warna-400/35 hover:text-warna-300 group rounded-lg ">
+                                    <svg class=" w-5 h-5 text-warna-300 transition duration-75 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd" d="M12 2c-.791 0-1.55.314-2.11.874l-.893.893a.985.985 0 0 1-.696.288H7.04A2.984 2.984 0 0 0 4.055 7.04v1.262a.986.986 0 0 1-.288.696l-.893.893a2.984 2.984 0 0 0 0 4.22l.893.893a.985.985 0 0 1 .288.696v1.262a2.984 2.984 0 0 0 2.984 2.984h1.262c.261 0 .512.104.696.288l.893.893a2.984 2.984 0 0 0 4.22 0l.893-.893a.985.985 0 0 1 .696-.288h1.262a2.984 2.984 0 0 0 2.984-2.984V15.7c0-.261.104-.512.288-.696l.893-.893a2.984 2.984 0 0 0 0-4.22l-.893-.893a.985.985 0 0 1-.288-.696V7.04a2.984 2.984 0 0 0-2.984-2.984h-1.262a.985.985 0 0 1-.696-.288l-.893-.893A2.984 2.984 0 0 0 12 2Zm3.683 7.73a1 1 0 1 0-1.414-1.413l-4.253 4.253-1.277-1.277a1 1 0 0 0-1.415 1.414l1.985 1.984a1 1 0 0 0 1.414 0l4.96-4.96Z" clip-rule="evenodd"/>
+                                    </svg>
+                                    
+                                <span class="flex-1 ms-3 whitespace-nowrap">
+                                    Verifikasi Akun
+                                </a>
+                            </li>
+                        @endif
+                        @if(Auth::user()->role == 'kepalaLingkungan')
                         <li>
                             <a href="{{ route('verifikasiPenduduk') }}"
                                 class="{{ request()->is('verifikasi-penduduk') ? 'bg-warna-400/30 text-warna-300' : '' }} flex items-center px-2 py-4 text-warna-300 hover:bg-warna-400/35 hover:text-warna-300 group rounded-lg ">
@@ -84,37 +100,42 @@
                                 Verifikasi Penduduk
                             </a>
                         </li>
-                        <li>
-                            <button id="dropDownButton" class="w-full flex justify-between items-center px-2 py-4  text-warna-300 hover:bg-warna-400/35 hover:text-warna-300 group rounded-lg">
-                                <div class="flex items-center">
-                                    <i class="fa-solid fa-unlock"></i>
-                                    <span class="flex-1 ms-3 whitespace-nowrap">Master Data</span>
-                                </div>
-                                <svg class="w-4 h-4 ml-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <ul id="dropDownContent" class="hidden space-y-2 pl-2 mt-2">
-                                <li>
-                                    <a href="/data-kepala-lingkungan" class="{{ request()->is('data-kepala-lingkungan') ? 'bg-warna-200 text-warna-300' : '' }} flex items-center p-2 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg ">
-                                        <svg class="w-5 h-5 text-warna-300 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z" />
-                                            <path d="M10 5a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5Z" />
-                                        </svg>
-                                        <span class="ms-3">Data Kepala Lingkungan</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/data-penanggung-jawab" class="flex items-center p-2 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg">
-                                        <svg class="w-5 h-5 text-warna-300 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z" />
-                                            <path d="M10 5a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5Z" />
-                                        </svg>
-                                        <span class="ms-3">Data Penanggung Jawab</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        @endif
+                        @if(Auth::user()->role == 'admin')
+                        
+                            <li>
+                                <button id="dropDownButton" class="w-full flex justify-between items-center px-2 py-4  text-warna-300 hover:bg-warna-400/35 hover:text-warna-300 group rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-unlock"></i>
+                                        <span class="flex-1 ms-3 whitespace-nowrap">Master Data</span>
+                                    </div>
+                                    <svg class="w-4 h-4 ml-auto" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <ul id="dropDownContent" class="hidden space-y-2 pl-2 mt-2">
+                                    <li>
+                                        <a href="/data-kepala-lingkungan" class="{{ request()->is('data-kepala-lingkungan') ? 'bg-warna-200 text-warna-300' : '' }} flex items-center p-2 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg ">
+                                            <svg class="w-5 h-5 text-warna-300 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z" />
+                                                <path d="M10 5a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5Z" />
+                                            </svg>
+                                            <span class="ms-3">Kelola Data Kepala Lingkungan</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/data-penanggung-jawab" class="flex items-center p-2 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg">
+                                            <svg class="w-5 h-5 text-warna-300 transition duration-75" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z" />
+                                                <path d="M10 5a5 5 0 0 0-5 5h10a5 5 0 0 0-5-5Z" />
+                                            </svg>
+                                            <span class="ms-3">Kelola Data Penanggung Jawab</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
+
                         <li>
                             <a href="/data-penduduk"
                                 class="{{ request()->is('data-penduduk') ? 'bg-warna-200 text-warna-300' : '' }} flex items-center px-2 py-4  text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg ">
@@ -124,29 +145,37 @@
                                         d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
                                 </svg>
                                 <span class="flex-1 ms-3 whitespace-nowrap">
-                                    Data Penduduk
+                                    Kelola Data Penduduk
                                 </span>
                             </a>
                         </li>
-                        <li>
-                            <a href="/laporan"
-                                class="{{ request()->is('laporan') ? 'bg-warna-200 text-warna-300' : '' }} flex items-center px-2 py-4 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg">
-                                <svg class="flex-shrink-0 w-5 h-5 text-warna-300 transition duration-75 group-hover:text-warna-300"
-                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    fill="currentColor" viewBox="0 0 24 24">
-                                    <path fill-rule="evenodd"
-                                        d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7Z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                                <span class="flex-1 ms-3 whitespace-nowrap">Laporan</span>
-                            </a>
-                        </li>
-                    {{-- <x-nav-dashboard icon='user' title='Profil' href='/profil'/> --}}
-                    @endif
 
-                    @if(Auth::user()->role == 'penduduk')
-                    
-                    @endif               
+                        <li>
+                            <a href="/layanan-surat"
+                                class="{{ request()->is('layanan-surat') ? 'bg-warna-200 text-warna-300' : '' }} flex items-center px-2 py-4  text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg ">
+                                <i class="fa-solid fa-file-lines"></i>
+                                <span class="flex-1 ms-3 whitespace-nowrap">
+                                    Layanan Surat
+                                </span>
+                            </a>
+
+                        @if(Auth::user()->role == 'admin' || Auth::user()->role == "kepalaLingkungan")
+                            <li>
+                                <a href="/laporan"
+                                    class="{{ request()->is('laporan') ? 'bg-warna-200 text-warna-300' : '' }} flex items-center px-2 py-4 text-warna-300 hover:bg-warna-200 hover:text-warna-300 group rounded-lg">
+                                    <svg class="flex-shrink-0 w-5 h-5 text-warna-300 transition duration-75 group-hover:text-warna-300"
+                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd"
+                                            d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-7Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="flex-1 ms-3 whitespace-nowrap">Laporan</span>
+                                </a>
+                            </li>
+                        @endif
+                    {{-- <x-nav-dashboard icon='user' title='Profil' href='/profil'/> --}}
+                    @endif   
                     <li>
                         <button
                             type="button"
@@ -279,55 +308,63 @@
     @livewireScripts
 
     <script>
-    function initMap() {
-        var latVal = document.getElementById('lat-value');
-        var lngVal = document.getElementById('lng-value');
+    // function initMap() {
+    //     var latVal = document.getElementById('lat-value');
+    //     var lngVal = document.getElementById('lng-value');
 
-        var defaultLat = parseFloat(latVal?.innerText) || -2.5489;
-        var defaultLng = parseFloat(lngVal?.innerText) || 118.0149;
+    //     var defaultLat = parseFloat(latVal?.innerText) || -2.5489;
+    //     var defaultLng = parseFloat(lngVal?.innerText) || 118.0149;
 
-        var mapContainer = document.getElementById('map');
-        if (!mapContainer) return;
+    //     var mapContainer = document.getElementById('map');
+    //     if (!mapContainer) return;
 
-        // Reset Leaflet instance if needed
-        if (mapContainer._leaflet_id) {
-            mapContainer._leaflet_id = null;
-        }
+    //     // Reset Leaflet instance if needed
+    //     if (mapContainer._leaflet_id) {
+    //         mapContainer._leaflet_id = null;
+    //     }
 
-        var map = L.map('map').setView([defaultLat, defaultLng], 5);
+    //     var map = L.map('map').setView([defaultLat, defaultLng], 5);
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
+    //     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //         maxZoom: 19,
+    //         attribution: '&copy; OpenStreetMap'
+    //     }).addTo(map);
 
-        var marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+    //     var marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
 
-        marker.on('dragend', function (e) {
-            var latlng = marker.getLatLng();
-            latVal.innerText = latlng.lat;
-            lngVal.innerText = latlng.lng;
-            Livewire.dispatch('setMapLocation', { lat: latlng.lat, lng: latlng.lng });
-        });
+    //     marker.on('dragend', function (e) {
+    //         var latlng = marker.getLatLng();
+    //         latVal.innerText = latlng.lat;
+    //         lngVal.innerText = latlng.lng;
+    //         Livewire.dispatch('setMapLocation', { lat: latlng.lat, lng: latlng.lng });
+    //     });
 
-        map.on('click', function (e) {
-            marker.setLatLng(e.latlng);
-            latVal.innerText = e.latlng.lat;
-            lngVal.innerText = e.latlng.lng;
-            Livewire.dispatch('setMapLocation', { lat: e.latlng.lat, lng: e.latlng.lng });
-        });
+    //     map.on('click', function (e) {
+    //         marker.setLatLng(e.latlng);
+    //         latVal.innerText = e.latlng.lat;
+    //         lngVal.innerText = e.latlng.lng;
+    //         Livewire.dispatch('setMapLocation', { lat: e.latlng.lat, lng: e.latlng.lng });
+    //     });
 
-    }
+    // }
 
 
 Livewire.on('modalUploadOpened', () => {
     setTimeout(() => {
         initMap();
-    }, 800); // Ubah jadi 800ms untuk memastikan modal sudah muncul
+    }, 800); 
 });
 
 
+
+
+                                                
+                                                
+
+
 </script>
+
+
 </body>
 
 </html>

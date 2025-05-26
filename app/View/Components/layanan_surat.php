@@ -6,8 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-
-class verifikasiPenduduk extends Component
+class layanan_surat extends Component
 {
     /**
      * Create a new component instance.
@@ -22,7 +21,6 @@ class verifikasiPenduduk extends Component
      */
     public function render(): View|Closure|string
     {
-
-        return view('components.verifikasi-penduduk');
+        return view('components.layanan_surat');
     }
 }

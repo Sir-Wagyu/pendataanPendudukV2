@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Livewire\DataKepalaLingkungan;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,24 +16,24 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/login/submit', [AuthController::class, 'loginSubmit'])->name('loginSubmit');
 });
 
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboardHome');
-
     Route::post('/update-password', [AuthController::class, 'updatePassword'])->name('updatePassword');
+
 
     Route::middleware(['checkRole:admin,kepalaLingkungan'])->group(function () {
         Route::get('/verifikasi-akun', [AuthController::class, 'verifikasiAkun'])->name('verifikasiAkun');
         Route::post('/verifikasi-akun/ubah-status/{id}', [AuthController::class, 'verifyUser'])->name(name: 'ubahStatus');
     });
 
+
     Route::middleware(['checkRole:admin,penanggungJawab,kepalaLingkungan'])->group(function () {
         Route::get('/data-penduduk', function () {
             return view('components.dataPenduduk');
         })->name('dataWargaTerdaftar');
 
-        Route::get('/verifikasi-penduduk', function () {
-            return view('components.verifikasi-penduduk');
-        })->name('verifikasiPenduduk');
+        Route::get('/download-surat/{id}', [\App\Http\Controllers\cetak_surat::class, 'downloadSurat'])->name('download.surat');
 
         Route::get('/data-kepala-lingkungan', function () {
             return view('components.kepala-lingkungan');
@@ -44,9 +43,20 @@ Route::middleware(['auth'])->group(function () {
             return view('components.penanggung-jawab');
         });
 
+        Route::get('/layanan-surat', function () {
+            return view('components.layanan-surat');
+        });
+
         Route::get('/laporan', function () {
             return view('components.laporan');
         });
+    });
+
+
+    Route::middleware(['checkRole:kepalaLingkungan'])->group(function () {
+        Route::get('/verifikasi-penduduk', function () {
+            return view('components.verifikasi-penduduk');
+        })->name('verifikasiPenduduk');
     });
 });
 
