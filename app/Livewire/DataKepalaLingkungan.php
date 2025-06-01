@@ -9,6 +9,9 @@ use App\Models\User;
 class DataKepalaLingkungan extends Component
 {
     public $user, $name, $alamat, $telepon, $email, $status, $username, $nik, $selectedId;
+    public $longitude = '';
+    public $latitude = '';
+
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
     public $isNotificationModal = false;
@@ -68,11 +71,11 @@ class DataKepalaLingkungan extends Component
     {
         $user = User::find($this->selectedId);
         if ($user) {
-            $user->delete();
+            $user->update(['status' => 'nonactive']);
             session()->flash('message', [
-                'title' => 'Data kepala lingkungan berhasil dihapus.',
+                'title' => 'Data kepala lingkungan berhasil dinonaktifkan.',
                 'type' => 'success',
-                'description' => 'Data user dengan nama ' . $user->name . ' telah dihapus dari sistem.'
+                'description' => 'Data user dengan nama ' . $user->name . ' telah dinonaktifkan dari sistem.'
             ]);
         } else {
             session()->flash('message', [
@@ -101,12 +104,13 @@ class DataKepalaLingkungan extends Component
     {
         $this->validate([
             'name' => 'required|string|max:40',
-            'nik' => 'required|string|max:20|unique:users,nik,' . $this->selectedId,
+            'nik' => 'required|string|min:16|max:16|unique:users,nik,' . $this->selectedId,
             'alamat' => 'required|string|max:50',
             'telepon' => 'required|string|max:15',
             'email' => 'required|email|unique:users,email,' . $this->selectedId,
             'username' => 'required|string|max:20|unique:users,username,' . $this->selectedId,
         ]);
+
 
         if ($this->selectedId) {
             $user = User::find($this->selectedId);
@@ -117,6 +121,8 @@ class DataKepalaLingkungan extends Component
                 'telepon' => $this->telepon,
                 'email' => $this->email,
                 'username' => $this->username,
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude,
             ]);
         } else {
             User::create([
@@ -129,6 +135,8 @@ class DataKepalaLingkungan extends Component
                 'status' => 'pending',
                 'role' => 'kepalaLingkungan',
                 'password' => bcrypt('password'),
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude,
             ]);
         }
 
@@ -152,6 +160,8 @@ class DataKepalaLingkungan extends Component
         $this->email = $user->email;
         $this->username = $user->username;
         $this->nik = $user->nik;
+        $this->latitude = $user->latitude;
+        $this->longitude = $user->longitude;
         $this->openModal();
     }
 

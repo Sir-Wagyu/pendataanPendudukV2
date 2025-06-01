@@ -38,4 +38,17 @@ class penduduk_pendatang extends Model
         'tanggal_keluar'
     ];
 
+    public function penanggungJawab()
+    {
+        return $this->belongsTo('App\Models\User', 'id_penanggungJawab');
+    }
+    public function kepalaLingkungan()
+    {
+        return $this->belongsTo('App\Models\User', 'id_kepalaLingkungan');
+    }
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'id_penanggungJawab');
+    }
+
 }

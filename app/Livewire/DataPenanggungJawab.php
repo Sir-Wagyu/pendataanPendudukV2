@@ -8,6 +8,10 @@ use App\Models\User;
 class DataPenanggungJawab extends Component
 {
     public $user, $name, $email, $paassword, $alamat, $telepon, $role, $status, $nik, $username, $selectedId;
+    public $longitude = '';
+    public $latitude = '';
+
+
     public $isModalOpen = false;
     public $isDeleteModalOpen = false;
     public $isNotificationModal = false;
@@ -68,11 +72,11 @@ class DataPenanggungJawab extends Component
     {
         $user = User::find($this->selectedId);
         if ($user) {
-            $user->delete();
+            $user->update(['status' => 'nonactive']);
             session()->flash('message', [
-                'title' => 'Data Penanggung Jawab berhasil dihapus.',
+                'title' => 'Data Penanggung Jawab berhasil dinonaktifkan.',
                 'type' => 'success',
-                'description' => 'Data user dengan nama ' . $user->name . ' telah dihapus dari sistem.'
+                'description' => 'Data user dengan nama ' . $user->name . ' telah dinonaktifkan dari sistem.'
             ]);
         } else {
             session()->flash('message', [
@@ -95,6 +99,8 @@ class DataPenanggungJawab extends Component
         $this->username = '';
         $this->nik = '';
         $this->selectedId = null;
+        $this->longitude = '';
+        $this->latitude = '';
     }
 
     public function save()
@@ -117,6 +123,8 @@ class DataPenanggungJawab extends Component
                 'telepon' => $this->telepon,
                 'email' => $this->email,
                 'username' => $this->username,
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude,
             ]);
         } else {
             User::create([
@@ -129,6 +137,8 @@ class DataPenanggungJawab extends Component
                 'status' => 'pending',
                 'role' => 'penanggungJawab',
                 'password' => bcrypt('password'),
+                'latitude' => $this->latitude,
+                'longitude' => $this->longitude,
             ]);
         }
 
@@ -152,6 +162,8 @@ class DataPenanggungJawab extends Component
         $this->email = $user->email;
         $this->username = $user->username;
         $this->nik = $user->nik;
+        $this->latitude = $user->latitude;
+        $this->longitude = $user->longitude;
         $this->openModal();
     }
 }

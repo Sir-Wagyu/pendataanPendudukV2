@@ -92,6 +92,16 @@ class DataPenduduk extends Component
     public $jenis_surat = '';
     public $jenisSuratOptions = [];
     public $keperluan_surat = '';
+    public $suratTerblokir = [];
+
+    public $barang_hilang = '';
+    public $waktu_kehilangan = '';
+    public $lokasi_kehilangan = '';
+
+    public $nama_anak = '';
+    public $tempat_lahir_anak = '';
+    public $tanggal_lahir_anak = '';
+    public $nama_sekolah = '';
 
 
 
@@ -278,6 +288,14 @@ class DataPenduduk extends Component
         $this->jenis_surat = '';
         $this->jenisSuratOptions = [];
         $this->keperluan_surat = '';
+        $this->suratTerblokir = [];
+        $this->barang_hilang = '';
+        $this->waktu_kehilangan = '';
+        $this->lokasi_kehilangan = '';
+        $this->nama_anak = '';
+        $this->tempat_lahir_anak = '';
+        $this->tanggal_lahir_anak = '';
+        $this->nama_sekolah = '';
     }
 
     public function openUploadModal()
@@ -304,6 +322,10 @@ class DataPenduduk extends Component
         $this->pendudukPreview = $penduduk;
         $this->isPreviewModal = true;
 
+        // fetching provinsi dan masukkan ke provisiNames
+        $responseProvinsi = Http::get('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+        $this->provinsiNames = collect($responseProvinsi->json())->pluck('name', 'id')->toArray();
+
         if ($penduduk && $penduduk->provinsi_asal) {
             $responseKabupaten = Http::get('https://www.emsifa.com/api-wilayah-indonesia/api/regencies/' . $penduduk->provinsi_asal . '.json');
             $this->kabupatenNames = collect($responseKabupaten->json())->pluck('name', 'id')->toArray();
@@ -328,7 +350,6 @@ class DataPenduduk extends Component
     {
         $this->isPreviewModal = false;
     }
-
 
 
     public function uploadFotoKTP()
@@ -671,11 +692,16 @@ class DataPenduduk extends Component
         $this->isVerifikasiModal = true;
 
         $this->jenisSuratOptions = layanan_surat::getJenisSuratOptions();
+
+
+        $this->suratTerblokir = layanan_surat::where('id_penduduk_pendatang', $selectedId)
+            ->whereIn('status_pengajuan', ['diajukan', 'disetujui'])
+            ->pluck('jenis_surat')
+            ->toArray();
     }
 
     public function pengajuanSurat()
     {
-        // dd($this->selectedId, $this->jenis_surat, $this->keperluan_surat);
 
         $this->validate([
             'selectedId' => 'required|exists:penduduk_pendatang,id',
@@ -685,25 +711,142 @@ class DataPenduduk extends Component
             'jenis_surat.required' => 'Jenis surat harus dipilih.',
         ]);
 
-        $namaPenduduk = penduduk_pendatang::find($this->selectedId)->nama_lengkap;
+        $this->validateDataTambahan();
 
-        layanan_surat::create([
-            'id_penduduk_pendatang' => $this->selectedId,
-            'id_penanggungJawab_pemohon' => Auth::id(),
-            'jenis_surat' => $this->jenis_surat,
-            'keperluan_surat' => $this->keperluan_surat,
-            'status_pengajuan' => 'diajukan',
-            'tanggal_pengajuan' => now(),
-        ]);
+        try {
+            if ($this->jenis_surat === 'surat_keterangan_kehilangan_lokal' || $this->jenis_surat === 'surat_keterangan_untuk_sekolah_anak') {
+                if ($this->jenis_surat === 'surat_keterangan_kehilangan_lokal') {
+                    $dataTambahan = [
+                        'barang_hilang' => $this->barang_hilang,
+                        'waktu_kehilangan' => $this->waktu_kehilangan,
+                        'lokasi_kehilangan' => $this->lokasi_kehilangan,
+                    ];
+                } elseif ($this->jenis_surat === 'surat_keterangan_untuk_sekolah_anak') {
+                    $dataTambahan = [
+                        'nama_anak' => $this->nama_anak,
+                        'tempat_lahir_anak' => $this->tempat_lahir_anak,
+                        'tanggal_lahir_anak' => $this->tanggal_lahir_anak,
+                        'nama_sekolah' => $this->nama_sekolah,
+                    ];
+                }
+            } else {
+                $dataTambahan = null;
+            }
 
-        session()->flash('message', [
-            'title' => 'Pengajuan Surat Berhasil',
-            'type' => 'success',
-            'description' => 'Pengajuan surat dengan jenis ' . str_replace('_', ' ', $this->jenis_surat) . ' untuk penduduk atas nama ' . $namaPenduduk . ' telah berhasil diajukan.',
-        ]);
-        $this->resetInputFields();
-        $this->isPengajuanMode = false;
-        $this->isVerifikasiModal = false;
+            layanan_surat::create([
+                'id_penduduk_pendatang' => $this->selectedId,
+                'jenis_surat' => $this->jenis_surat,
+                'keperluan_surat' => $this->keperluan_surat,
+                'data_tambahan' => $dataTambahan,
+                'status_pengajuan' => 'diajukan',
+                'tanggal_pengajuan' => now(),
+                'id_penanggungJawab_pemohon' => Auth::user()->id,
+            ]);
+
+            session()->flash('message', [
+                'type' => 'success',
+                'title' => 'Pengajuan Berhasil!',
+                'description' => 'Pengajuan surat telah berhasil diajukan dan menunggu persetujuan dari Kepala Lingkungan.'
+            ]);
+
+            $this->closePengajuanModal();
+            $this->isNotificationModal = true;
+        } catch (\Exception $e) {
+            Log::error('Error pengajuan surat: ' . $e->getMessage());
+
+            session()->flash('message', [
+                'type' => 'error',
+                'title' => 'Gagal Mengajukan!',
+                'description' => 'Terjadi kesalahan saat mengajukan surat. Silakan coba lagi.'
+            ]);
+
+            $this->closePengajuanModal();
+            $this->isNotificationModal = true;
+        }
+    }
+
+    private function getJudulSurat($jenis_surat)
+    {
+        if ($jenis_surat === 'surat_keterangan_domisili') {
+            return 'Surat Keterangan Domisili';
+        } elseif ($jenis_surat === 'surat_pengantar_umum') {
+            return 'Surat Pengantar Umum';
+        } elseif ($jenis_surat === 'surat_pengantar_skck') {
+            return 'Surat Pengantar SKCK';
+        } elseif ($jenis_surat === 'surat_keterangan_kehilangan_lokal') {
+            return 'Surat Keterangan Kehilangan Lokal';
+        } elseif ($jenis_surat === 'surat_keterangan_untuk_sekolah_anak') {
+            return 'Surat Keterangan Untuk Sekolah Anak';
+        }
+    }
+
+    private function validateDataTambahan()
+    {
+        switch ($this->jenis_surat) {
+            case 'surat_keterangan_hilang_lokal':
+                $this->validate([
+                    'barang_hilang' => 'required|string|min:3',
+                    'waktu_kehilangan' => 'required|date',
+                    'lokasi_kehilangan' => 'required|string|min:5',
+                ], [
+                    'barang_hilang.required' => 'Barang/dokumen yang hilang harus diisi',
+                    'barang_hilang.min' => 'Barang/dokumen yang hilang minimal 3 karakter',
+                    'waktu_kehilangan.required' => 'Waktu kehilangan harus diisi',
+                    'lokasi_kehilangan.required' => 'Lokasi kehilangan harus diisi',
+                    'lokasi_kehilangan.min' => 'Lokasi kehilangan minimal 5 karakter',
+                ]);
+                break;
+
+            case 'surat_keterangan_untuk_sekolah_anak':
+                $this->validate([
+                    'nama_anak' => 'required|string|min:3',
+                    'tempat_lahir_anak' => 'required|string|min:3',
+                    'tanggal_lahir_anak' => 'required|date|before:today',
+                    'nama_sekolah' => 'required|string|min:5',
+                ], [
+                    'nama_anak.required' => 'Nama anak harus diisi',
+                    'nama_anak.min' => 'Nama anak minimal 3 karakter',
+                    'tempat_lahir_anak.required' => 'Tempat lahir anak harus diisi',
+                    'tempat_lahir_anak.min' => 'Tempat lahir anak minimal 3 karakter',
+                    'tanggal_lahir_anak.required' => 'Tanggal lahir anak harus diisi',
+                    'tanggal_lahir_anak.before' => 'Tanggal lahir anak harus sebelum hari ini',
+                    'nama_sekolah.required' => 'Nama sekolah harus diisi',
+                    'nama_sekolah.min' => 'Nama sekolah minimal 5 karakter',
+                ]);
+                break;
+        }
+    }
+
+    private function prepareDataTambahan()
+    {
+        $dataTambahan = [];
+
+        switch ($this->jenis_surat) {
+            case 'surat_keterangan_hilang_lokal':
+                $dataTambahan = [
+                    'barang_hilang' => $this->barang_hilang,
+                    'waktu_kehilangan' => $this->waktu_kehilangan,
+                    'lokasi_kehilangan' => $this->lokasi_kehilangan,
+                ];
+                break;
+
+            case 'surat_keterangan_untuk_sekolah_anak':
+                $dataTambahan = [
+                    'nama_anak' => $this->nama_anak,
+                    'tempat_lahir_anak' => $this->tempat_lahir_anak,
+                    'tanggal_lahir_anak' => $this->tanggal_lahir_anak,
+                    'nama_sekolah' => $this->nama_sekolah,
+                ];
+                break;
+
+            default:
+                $dataTambahan = null;
+                break;
+        }
+
+
+
+        return $dataTambahan;
     }
 
     public function closePengajuanModal()

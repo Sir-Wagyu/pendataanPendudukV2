@@ -23,3 +23,18 @@
     --font-raleway: "Raleway", sans-serif;
     --font-open-sans: "Open Sans", sans-serif;
 }
+
+.custom-marker {
+    background: transparent !important;
+    border: none !important;
+}
+
+.custom-popup .leaflet-popup-content {
+    margin: 8px 12px;
+    line-height: 1.4;
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.1);
+}

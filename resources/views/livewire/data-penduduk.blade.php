@@ -6,211 +6,222 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
-    <div class="w-full flex justify-between items-center py-3  mb-6">
-        <h2 class="font-semibold text-xl text-warna-300 leading-tight">
-            Data Penduduk Pendatang
-        </h2>
-    </div>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+        <div class="w-full flex justify-between items-center mb-6">
+            <h2 class="font-semibold text-xl text-warna-300 leading-tight">
+                Data Penduduk Pendatang
+            </h2>
+        </div>
 
-    <div class="mb-4 flex justify-between items-center">
-        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari..." class="px-4 py-2 border border-gray-300 rounded-lg">
+        <div class="mb-4 flex justify-between items-center">
+            <x-g-input
+            type='text'
+            wire:model.live.debounce.300ms="search"
+            label="Cari Penduduk"
+            size="w-3/4 md:w-1/2 xl:w-1/3"
+            />
 
-            <button data-tooltip-target='tooltip-bottom' data-tooltip-placement="bottom" type="button" wire:click="openUploadModal" class="w-9 md:w-11 h-9 md:h-11 bg-warna-500 rounded-lg flex justify-center items-center text-white shadow-lg hover:bg-warna-500/80 active:scale-95 transition-all cursor-pointer disabled:bg-gray-300"
-                @if(auth()->user()->role != 'penanggungJawab') disabled  @endif
-                >
-                <i class="fa-solid fa-user-plus md:text-lg "></i>
-            </button>
-            <div id="tooltip-bottom" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                @if(auth()->user()->role != 'penanggungJawab' )
-                    <p>Tambah data hanya untuk penanggung jawab</p>
-                @else
-                    <p>Tambah Data Penduduk</p>
-                @endif
-                <div class="tooltip-arrow" data-popper-arrow></div>
-            </div>
-    </div>
+                <button data-tooltip-target='tooltip-bottom' data-tooltip-placement="bottom" type="button" wire:click="openUploadModal" class="w-9 md:w-11 h-9 md:h-11 bg-warna-500 rounded-lg flex justify-center items-center text-white shadow-lg hover:bg-warna-500/80 active:scale-95 transition-all cursor-pointer disabled:bg-gray-300"
+                    @if(auth()->user()->role != 'penanggungJawab') disabled  @endif
+                    >
+                    <i class="fa-solid fa-user-plus md:text-lg "></i>
+                </button>
+                <div id="tooltip-bottom" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                    @if(auth()->user()->role != 'penanggungJawab' )
+                        <p>Tambah data hanya untuk penanggung jawab</p>
+                    @else
+                        <p>Tambah Data Penduduk</p>
+                    @endif
+                    <div class="tooltip-arrow" data-popper-arrow></div>
+                </div>
+        </div>
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table
-            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse border border-gray-200 bg-warna-100">
-            <thead class="text-xs text-warna-300 uppercase border-y-3 border-gray-200 ">
-                <tr>
-                    <th scope="col" class="px-5 py-2 md:px-10 md:py-3  whitespace-nowrap    ">
-                        No
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
-                        Nama Lengkap
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
-                        NIK
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Tanggal Masuk 
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Status Verifikasi
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Catatan Verifikasi
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Penanggung Jawab
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Aksi
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @if($penduduk->isEmpty())
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table
+                class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse border border-gray-200 bg-warna-100">
+                <thead class="text-xs text-warna-300 uppercase border-y-3 border-gray-200 ">
                     <tr>
-                        <td colspan="7" class="text-center py-6 text-gray-500">Data tidak tersedia</td>
+                        <th scope="col" class="px-5 py-2 md:px-10 md:py-3  whitespace-nowrap    ">
+                            No
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
+                            Nama Lengkap
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
+                            NIK
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Tanggal Masuk 
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Status Verifikasi
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Catatan Verifikasi
+                        </th>
+                        @if(auth()->user()->role == 'admin' || auth()->user()->role == 'kepalaLingkungan')
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Penanggung Jawab
+                        </th>
+                        @endif
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Aksi
+                        </th>
                     </tr>
-                @else
-                    @foreach ($penduduk as $penduduk)
-                        <tr class="border-t-2 bg-white border-b text-warna-300 border-gray-200 xxl:hover:bg-gray-100">
-                            <td class="px-5 py-2 md:px-10 md:py-3  whitespace-nowrap    ">{{ $penduduk->id }}</td>
-                            <td class="px-10 py-3  whitespace-nowrap  ">{{ $penduduk->nama_lengkap }}</td>
-                            <td class="px-10 py-3  whitespace-nowrap  ">{{ $penduduk->nik }}</td>
-                            <td class="px-10 py-3  whitespace-nowrap ">{{ $penduduk->tanggal_masuk }}</td>
-                            <td class="px-10 py-3  whitespace-nowrap ">
-                                @if($penduduk->status_akun == 'ditolak' || $penduduk->status_akun == 'ulangi')
-                                    <div class="p-2 {{ $penduduk->status_akun == 'ditolak' ? 'bg-warna-800' : 'bg-warna-700' }} rounded-full text-xs font-semibold">
-                                        <p class="text-white font-semibold text-center">{{ $penduduk->status_akun == 'ditolak' ? 'Ditolak' : 'Ulangi' }}</p>
-                                    </div>
-                                @elseif($penduduk->status_akun == 'diterima')
-                                    <div class="p-2 bg-warna-500 rounded-full text-xs font-semibold">
-                                        <p class="text-white font-semibold text-center">Disetujui</p>
-                                    </div>
-                                @elseif($penduduk->status_akun == 'pending')
-                                    <div class="p-2 bg-warna-700 rounded-full text-xs font-semibold">
-                                        <p class="text-white font-semibold text-center">Menunggu</p>
-                                    </div>
-                                @else
-                                    <div class="p-2 border-2 border-warna-800 rounded-full text-xs font-semibold">
-                                        <p class="text-warna-800 font-semibold text-center">Pergi</p>
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="px-10 py-3  whitespace-nowrap ">
-                                @if( $penduduk->alasan_penolakan )
-                                    <button type="button" wire:click="openAlasanModal({{ $penduduk->id }})" class="flex items-center justify-center px-4 py-2 bg-warna-100 hover:bg-warna-200 active:scale-95 transition-all border border-gray-300 rounded-lg ">
-                                        <p>Lihat Pesan</p>
-                                    </button>
-                                    
-                                @endif
-                            </td>
-                            <!-- minor change: penangggung jawab : catatan pengajuan -->
-                            <td class="px-10 py-3  whitespace-nowrap ">
-                                {{ $penanggungJawabNames[$penduduk->id_penanggungJawab] ?? '-' }}
-                            </td>
-                            <td class="px-10 py-3 whitespace-nowrap">
-                                <!-- Preview Button -->
-                                <button 
-                                    data-tooltip-target='tooltip-preview-{{ $penduduk->id }}' 
-                                    data-tooltip-placement="bottom" 
-                                    type="button" 
-                                    wire:click="openPreviewModal({{ $penduduk->id }})" 
-                                    class="bg-warna-400 hover:bg-warna-400/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                
-                                @if(auth()->user()->role == 'penanggungJawab')
-                                    <!-- Edit Button -->
-                                    @if($penduduk->status_akun == 'pending' || $penduduk->status_akun == 'ulangi')
-                                        <button 
-                                            data-tooltip-target='tooltip-edit-{{ $penduduk->id }}' 
-                                            data-tooltip-placement="bottom" 
-                                            type="button" 
-                                            wire:click="openEditModal({{ $penduduk->id }})" 
-                                            class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
-                                            <i class="fa-solid fa-user-pen"></i>
-                                        </button>
+                </thead>
+                <tbody>
+                    @if($penduduk->isEmpty())
+                        <tr>
+                            <td colspan="7" class="text-center py-6 text-gray-500">Data tidak tersedia</td>
+                        </tr>
+                    @else
+                        @foreach ($penduduk as $penduduk)
+                            <tr class="border-t-2 bg-white border-b text-warna-300 border-gray-200 xxl:hover:bg-gray-100">
+                                <td class="px-5 py-2 md:px-10 md:py-3  whitespace-nowrap    ">{{ $penduduk->id }}</td>
+                                <td class="px-10 py-3  whitespace-nowrap  ">{{ $penduduk->nama_lengkap }}</td>
+                                <td class="px-10 py-3  whitespace-nowrap  ">{{ $penduduk->nik }}</td>
+                                <td class="px-10 py-3  whitespace-nowrap ">{{ $penduduk->tanggal_masuk }}</td>
+                                <td class="px-10 py-3  whitespace-nowrap ">
+                                    @if($penduduk->status_akun == 'ditolak' || $penduduk->status_akun == 'ulangi')
+                                        <div class="p-2 {{ $penduduk->status_akun == 'ditolak' ? 'bg-warna-800' : 'bg-warna-700' }} rounded-full text-xs font-semibold">
+                                            <p class="text-white font-semibold text-center">{{ $penduduk->status_akun == 'ditolak' ? 'Ditolak' : 'Ulangi' }}</p>
+                                        </div>
+                                    @elseif($penduduk->status_akun == 'diterima')
+                                        <div class="p-2 bg-warna-500 rounded-full text-xs font-semibold">
+                                            <p class="text-white font-semibold text-center">Disetujui</p>
+                                        </div>
+                                    @elseif($penduduk->status_akun == 'pending')
+                                        <div class="p-2 bg-warna-700 rounded-full text-xs font-semibold">
+                                            <p class="text-white font-semibold text-center">Menunggu</p>
+                                        </div>
+                                    @else
+                                        <div class="p-2 border-2 border-warna-800 rounded-full text-xs font-semibold">
+                                            <p class="text-warna-800 font-semibold text-center">Pergi</p>
+                                        </div>
                                     @endif
-                                    
-                                    <!-- Keluar & pengajuan Button -->
-                                    @if($penduduk->status_akun == 'diterima')
-                                        <button 
-                                            data-tooltip-target='tooltip-surat-{{ $penduduk->id }}' 
-                                            data-tooltip-placement="bottom" 
-                                            type="button"
-                                            wire:click="openPengajuanModal({{ $penduduk->id }})" 
-                                            class="bg-warna-400 hover:bg-warna-400/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer ml-1">
-                                            <i class="fa-solid fa-file-lines"></i>
-                                        </button>
-                                        <button 
-                                            data-tooltip-target='tooltip-keluar-{{ $penduduk->id }}' 
-                                            data-tooltip-placement="bottom" 
-                                            type="button" 
-                                            wire:click="openDeleteModal({{ $penduduk->id }})" 
-                                            class="bg-warna-800 hover:bg-warna-800/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
-                                            <i class="fa-solid fa-right-from-bracket"></i>
+                                </td>
+                                <td class="px-10 py-3  whitespace-nowrap ">
+                                    @if( $penduduk->alasan_penolakan )
+                                        <button type="button" wire:click="openAlasanModal({{ $penduduk->id }})" class="flex items-center justify-center px-4 py-2 bg-warna-100 hover:bg-warna-200 active:scale-95 transition-all border border-gray-300 rounded-lg ">
+                                            <p>Lihat Pesan</p>
                                         </button>
                                         
                                     @endif
-                                    
-                                    <!-- Kembali Button -->
-                                    @if($penduduk->status_akun == 'keluar')
-                                        <button 
-                                            data-tooltip-target='tooltip-kembali-{{ $penduduk->id }}' 
-                                            data-tooltip-placement="bottom" 
-                                            type="button" 
-                                            wire:click="openPendatangKembaliModal({{ $penduduk->id }})" 
-                                            class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
-                                            <i class="fa-solid fa-right-to-bracket"></i>
-                                        </button>
-                                    @endif
-                                    
-                                    <!-- Verifikasi Ulang Button -->
-                                    @if($penduduk->status_akun == 'ulangi')
-                                        <button 
-                                            data-tooltip-target='tooltip-verifikasi-{{ $penduduk->id }}' 
-                                            data-tooltip-placement="bottom" 
-                                            type="button" 
-                                            wire:click="openVerifikasiUlangModal({{ $penduduk->id }})" 
-                                            class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
-                                            <i class="fa-solid fa-check"></i>
-                                        </button>
-                                    @endif
+                                </td>
+                                <!-- minor change: penangggung jawab : catatan pengajuan -->
+                                @if(auth()->user()->role == 'kepalaLingkungan' || auth()->user()->role == 'admin')
+                                <td class="px-10 py-3  whitespace-nowrap ">
+                                    {{ $penanggungJawabNames[$penduduk->id_penanggungJawab] ?? '-' }}
+                                </td>
                                 @endif
-                            </td>
+                                <td class="px-10 py-3 whitespace-nowrap">
+                                    <!-- Preview Button -->
+                                    <button 
+                                        data-tooltip-target='tooltip-preview-{{ $penduduk->id }}' 
+                                        data-tooltip-placement="bottom" 
+                                        type="button" 
+                                        wire:click="openPreviewModal({{ $penduduk->id }})" 
+                                        class="bg-warna-400 hover:bg-warna-400/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    
+                                    @if(auth()->user()->role == 'penanggungJawab')
+                                        <!-- Edit Button -->
+                                        @if($penduduk->status_akun == 'pending' || $penduduk->status_akun == 'ulangi')
+                                            <button 
+                                                data-tooltip-target='tooltip-edit-{{ $penduduk->id }}' 
+                                                data-tooltip-placement="bottom" 
+                                                type="button" 
+                                                wire:click="openEditModal({{ $penduduk->id }})" 
+                                                class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                                <i class="fa-solid fa-user-pen"></i>
+                                            </button>
+                                        @endif
+                                        
+                                        <!-- Keluar & pengajuan Button -->
+                                        @if($penduduk->status_akun == 'diterima')
+                                            <button 
+                                                data-tooltip-target='tooltip-surat-{{ $penduduk->id }}' 
+                                                data-tooltip-placement="bottom" 
+                                                type="button"
+                                                wire:click="openPengajuanModal({{ $penduduk->id }})" 
+                                                class="bg-warna-400 hover:bg-warna-400/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer ml-1">
+                                                <i class="fa-solid fa-file-lines"></i>
+                                            </button>
+                                            <button 
+                                                data-tooltip-target='tooltip-keluar-{{ $penduduk->id }}' 
+                                                data-tooltip-placement="bottom" 
+                                                type="button" 
+                                                wire:click="openDeleteModal({{ $penduduk->id }})" 
+                                                class="bg-warna-800 hover:bg-warna-800/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                                <i class="fa-solid fa-right-from-bracket"></i>
+                                            </button>
+                                            
+                                        @endif
+                                        
+                                        <!-- Kembali Button -->
+                                        @if($penduduk->status_akun == 'keluar')
+                                            <button 
+                                                data-tooltip-target='tooltip-kembali-{{ $penduduk->id }}' 
+                                                data-tooltip-placement="bottom" 
+                                                type="button" 
+                                                wire:click="openPendatangKembaliModal({{ $penduduk->id }})" 
+                                                class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                                <i class="fa-solid fa-right-to-bracket"></i>
+                                            </button>
+                                        @endif
+                                        
+                                        <!-- Verifikasi Ulang Button -->
+                                        @if($penduduk->status_akun == 'ulangi')
+                                            <button 
+                                                data-tooltip-target='tooltip-verifikasi-{{ $penduduk->id }}' 
+                                                data-tooltip-placement="bottom" 
+                                                type="button" 
+                                                wire:click="openVerifikasiUlangModal({{ $penduduk->id }})" 
+                                                class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                                <i class="fa-solid fa-check"></i>
+                                            </button>
+                                        @endif
+                                    @endif
+                                </td>
 
-                            <!-- Tooltip -->
-                            <div id="tooltip-preview-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                                <p>Lihat Detail Penduduk</p>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
+                                <!-- Tooltip -->
+                                <div id="tooltip-preview-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                                    <p>Lihat Detail Penduduk</p>
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
 
-                            <div id="tooltip-edit-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                                <p>Edit Data Penduduk</p>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
+                                <div id="tooltip-edit-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                                    <p>Edit Data Penduduk</p>
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
 
-                            <div id="tooltip-keluar-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                                <p>Tandai Penduduk Keluar</p>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
+                                <div id="tooltip-keluar-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                                    <p>Tandai Penduduk Keluar</p>
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
 
-                            <div id="tooltip-kembali-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                                <p>Tandai Penduduk Kembali</p>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
+                                <div id="tooltip-kembali-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                                    <p>Tandai Penduduk Kembali</p>
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
 
-                            <div id="tooltip-verifikasi-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                                <p>Verifikasi Ulang Data</p>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
+                                <div id="tooltip-verifikasi-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                                    <p>Verifikasi Ulang Data</p>
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
 
-                            <div id="tooltip-surat-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
-                                <p>Ajukan Pembuatan Surat</p>
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </div>
-                        </tr>
-                    @endforeach
-                @endif
-            </tbody>
-        </table>
-        
+                                <div id="tooltip-surat-{{ $penduduk->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                                    <p>Ajukan Pembuatan Surat</p>
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+            
+        </div>
     </div>
 
     @if($isPreviewAlasanModal)
@@ -389,9 +400,15 @@
                                     class="mt-6 md:mt-7"
                                     :options="['A' => 'A', 'B' => 'B', 'AB' => 'AB', 'O' => 'O']"
                                 />
-
-                                <x-g-input name="agama" label="Agama" wireModel="agama" :error="$errors->first('agama')" class="mt-6 md:mt-7"/>
-
+                                <x-g-input 
+                                    name="agama"
+                                    type="select"
+                                    label="Agama"
+                                    wire:model="agama"
+                                    :error="$errors->first('agama')"
+                                    class="mt-6 md:mt-7"
+                                    :options="['islam' => 'Islam', 'hindu' => 'Hindu', 'katolik' => 'Katolik', 'protestan' => 'Protestan', 'buddha' => 'Buddha', 'konghucu' => 'Konghucu', 'lainnya' => 'lainnya']"
+                                />
 
                                 <x-g-input 
                                         type="select" 
@@ -678,11 +695,12 @@
                                         <label class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Jenis Kelamin</label>
                                         <select class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm  peer disabled:text-gray-500" disabled>
                                             <option value="">Pilih Jenis Kelamin</option>
-                                            <option value="Laki-laki" {{ ($pendudukPreview->jenis_kelamin ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                            <option value="Perempuan" {{ ($pendudukPreview->jenis_kelamin ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                            <option value="Laki-laki" {{ ($pendudukPreview->jenis_kelamin ?? '') == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                            <option value="Perempuan" {{ ($pendudukPreview->jenis_kelamin ?? '') == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
                                         </select>
                                         
                                     </div>
+                                    
                                     <div class="relative mt-5 md:mt-6">
                                         <label class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Golongan Darah</label>
                                         <select class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm  peer disabled:text-gray-500" disabled>
@@ -843,67 +861,163 @@
     @endif
 
     @if($isVerifikasiModal)
-    <div class="fixed z-50 inset-0 flex items-center justify-center bg-warna-300/50 ">
-        <x-modal class="relative bg-white flex flex-col items-center  mx-5 md:mx-0 w-max md:w-[60%] lg:w-[50%] xl:w-[40%] py-10 ">
-            <i class="absolute -top-12 p-5 rounded-full bg-white fa-solid fa-circle-exclamation
-                {{ $isVerifikasiUlangMode ? 'text-warna-700' : ($isPendatangKembaliMode ? 'text-warna-500' : ($isPengajuanMode ? 'text-warna-400' : 'text-warna-800')) }}
-                text-6xl md:text-7xl xl:text-8xl"></i>
-            
-            @if($isPengajuanMode)
-                <form class="w-full flex flex-col items-center" wire:submit.prevent="pengajuanSurat">
-                    <div class="flex flex-col w-full items-center mt-5 lg:mt-7 xl:mt-14 mb-8 lg:mb-10">
-                        <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">
-                            Pengajuan Surat Penduduk
-                        </h2>
+        <div class="fixed z-50 inset-0 flex items-center justify-center bg-warna-300/50 ">
+            <x-modal class="relative bg-white flex flex-col items-center  mx-5 md:mx-0 w-max md:w-[60%] lg:w-[50%] xl:w-[40%] py-10 ">
+                <i class="absolute -top-12 p-5 rounded-full bg-white fa-solid fa-circle-exclamation
+                    {{ $isVerifikasiUlangMode ? 'text-warna-700' : ($isPendatangKembaliMode ? 'text-warna-500' : ($isPengajuanMode ? 'text-warna-400' : 'text-warna-800')) }}
+                    text-6xl md:text-7xl xl:text-8xl"></i>
+                
+                @if($isPengajuanMode)
+                
+                    <form class="w-full flex flex-col items-center" wire:submit.prevent="pengajuanSurat">
                         
-                        <div class="w-full px-5 md:px-7 lg:px-10">
-                            <div class="mt-6 md:mt-7 relative">
-                                <label for="jenis_surat" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Jenis Surat</label>
-                                <select id="jenis_surat" name="jenis_surat" wire:model="jenis_surat" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer">
-                                    <option value="" disabled selected>Pilih Jenis Surat</option>
-                                    @foreach($jenisSuratOptions ?? [] as $key => $value)
-                                        <option value="{{ $key }}">{{ $value }}</option>
-                                    @endforeach
-                                </select>
-                                @error('jenis_surat')
-                                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                                @enderror
+                            <div class="flex flex-col w-full items-center mt-5 lg:mt-7 xl:mt-14 mb-8 lg:mb-10">
+                                <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">
+                                    Pengajuan Surat Penduduk
+                                </h2>
+                                
+                                <div class="w-full px-5 md:px-7 lg:px-10">
+                                    <div class="max-h-[45dvh] md:max-h-[55dvh] overflow-y-auto pr-2 w-full">
+                                    {{-- Info surat yang sudah diajukan --}}
+                                        @if(!empty($suratTerblokir))
+                                            <div class="mb-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                                                <div class="flex">
+                                                    <i class="fa-solid fa-triangle-exclamation text-yellow-400 mt-1 mr-2"></i>
+                                                    <div>
+                                                        <p class="text-sm font-medium text-yellow-800">
+                                                            Jenis surat yang tidak dapat diajukan:
+                                                        </p>
+                                                        <ul class="mt-1 text-sm text-yellow-700 list-disc list-inside">
+                                                            @foreach($suratTerblokir as $jenis)
+                                                                <li>{{ $jenisSuratOptions[$jenis] ?? $jenis }} (sudah diajukan/disetujui)</li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <div class="mt-6 md:mt-7 relative">
+                                            <label for="jenis_surat" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Jenis Surat</label>
+                                            <select id="jenis_surat" name="jenis_surat" wire:model.live="jenis_surat" class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer">
+                                                <option value="" disabled selected>Pilih Jenis Surat</option>
+                                                @foreach($jenisSuratOptions ?? [] as $key => $value)
+                                                    {{-- Disable option jika surat sudah diajukan --}}
+                                                    <option value="{{ $key }}" 
+                                                        @if(in_array($key, $suratTerblokir)) 
+                                                            disabled 
+                                                            class="text-gray-400 bg-gray-100" 
+                                                        @endif>
+                                                        {{ $value }}
+                                                        @if(in_array($key, $suratTerblokir))
+                                                            (Sudah diajukan)
+                                                        @endif
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('jenis_surat')
+                                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                        
+                                        <div class="mt-6 md:mt-7 relative">
+                                            <label class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Alasan Pengajuan</label>
+                                            <textarea 
+                                                wire:model="keperluan_surat" 
+                                                class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" 
+                                                rows="3" 
+                                                placeholder="Masukkan alasan pengajuan surat">
+                                            </textarea>
+                                        </div>
+
+                                        @if($jenis_surat == 'surat_keterangan_kehilangan_lokal' || $jenis_surat == 'surat_keterangan_untuk_sekolah_anak')
+                                            @if($jenis_surat == 'surat_keterangan_kehilangan_lokal')
+                                                <x-g-input 
+                                                    type='text'
+                                                    label='Barang/Dokumen yang Hilang'
+                                                    wireModel="barang_hilang"
+                                                    class="mt-6 md:mt-7"
+                                                />
+                                                <div class='mt-6 md:mt-7 relative'>
+                                                    <label class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Waktu Kehilangan</label>
+                                                    <input type="datetime-local" 
+                                                        wire:model="waktu_kehilangan" 
+                                                        class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer">
+                                                </div>
+                                                <x-g-input 
+                                                    type='text'
+                                                    label='Lokasi Kehilangan'
+                                                    wireModel="lokasi_kehilangan"
+                                                    class="mt-6 md:mt-7" 
+                                                />
+                                            @else
+                                                <x-g-input 
+                                                    type='text'
+                                                    label='Nama Anak'
+                                                    wireModel="nama_anak"
+                                                    class="mt-6 md:mt-7" 
+                                                />
+                                                <div class="flex w-full mt-6 md:mt-7 gap-3">
+                                                    <x-g-input 
+                                                        type='text'
+                                                        label='Tempat Lahir Anak'
+                                                        wireModel="tempat_lahir_anak"
+                                                        size="w-1/2"
+                                                    />
+                                                    <x-g-input 
+                                                        type='date'
+                                                        label='Tanggal Lahir Anak'
+                                                        wireModel="tanggal_lahir_anak"
+                                                        size="w-1/2"
+                                                    />
+                                                </div>
+                                                <x-g-input 
+                                                    type='text'
+                                                    label='Nama Sekolah'
+                                                    wireModel="nama_sekolah"
+                                                    class="mt-6 md:mt-7"
+                                                />
+                                            @endif
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <div class="mt-6 md:mt-7 relative">
-                                <label class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Alasan Pengajuan</label>
-                                <textarea 
-                                    wire:model="keperluan_surat" 
-                                    class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" 
-                                    rows="3" 
-                                    placeholder="Masukkan alasan pengajuan surat">
-                                </textarea>
-    
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-center w-[90%] ">
-                        <button 
-                            type="button" 
-                            wire:click="closePengajuanModal" 
-                            class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer"
-                        >
-                            Batal
-                        </button>
-                        
-                        <button 
-                            type="submit" 
-                            class="bg-warna-500 hover:bg-warna-500/90 active:scale-95 transition-all text-white w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer disabled:bg-warna-200 disabled:cursor-not-allowed"
-                            @if($jenis_surat)
-                                disabled
+
+                            @if($errors->any())
+                                <div class="w-full px-5 md:px-7 lg:px-10">
+                                    <div class="bg-red-50 border-l-4 border-red-400 text-red-700 p-4 mb-4">
+                                        <ul class="list-disc list-inside">
+                                            @foreach($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
                             @endif
-                        >
-                            Ajukan
-                        </button>
-                    </div>
-                </form>
-            @else
+                        
+
+                        <div class="flex justify-center w-[90%] ">
+                            <button 
+                                type="button" 
+                                wire:click="closePengajuanModal" 
+                                class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer"
+                            >
+                                Batal
+                            </button>
+                            
+                            <button 
+                                type="submit" 
+                                class="bg-warna-500 hover:bg-warna-500/90 active:scale-95 transition-all text-white w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                @if(!$jenis_surat)
+                                    disabled
+                                @endif
+                            >
+                                Ajukan
+                            </button>
+                        </div>
+                    </form>
+                    
+                @else
                 <div class="flex flex-col w-full items-center mt-5 lg:mt-7 xl:mt-14 mb-8 lg:mb-10">
                     <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">
                         @if($isVerifikasiUlangMode)

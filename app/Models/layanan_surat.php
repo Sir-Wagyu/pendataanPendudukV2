@@ -18,6 +18,7 @@ class layanan_surat extends Model
         'id_kepalaLingkungan_penyetuju',
         'jenis_surat',
         'keperluan_surat',
+        'data_tambahan',
         'status_pengajuan',
         'catatan_kepalaLingkungan',
         'nomor_surat_terbitan',
@@ -28,6 +29,17 @@ class layanan_surat extends Model
         'maksimal_generate_pdf'
     ];
 
+    protected $dates = [
+        'tanggal_pengajuan',
+        'tanggal_surat_diterbitkan',
+        'tanggal_surat_dicetak_pertama',
+        'cetak_sebelum_tanggal'
+    ];
+
+    protected $casts = [
+        'data_tambahan' => 'array',
+    ];
+
     public function penduduk()
     {
         return $this->belongsTo(penduduk_pendatang::class, 'id_penduduk_pendatang');
@@ -35,12 +47,12 @@ class layanan_surat extends Model
 
     public function penanggungJawab()
     {
-        return $this->belongsTo(User::class, 'id_penanggungJawab_pemohon');
+        return $this->belongsTo(User::class, 'id_penanggungJawab_pemohon')->where('role', 'penanggungJawab');
     }
 
     public function kepalaLingkungan()
     {
-        return $this->belongsTo(User::class, 'id_kepalaLingkungan_penyetuju');
+        return $this->belongsTo(User::class, 'id_kepalaLingkungan_penyetuju')->where('role', 'kepalaLingkungan');
     }
 
     public static function getJenisSuratEnum()
@@ -82,5 +94,49 @@ class layanan_surat extends Model
         ];
 
         return $labels[$value] ?? ucwords(str_replace('_', ' ', $value));
+    }
+
+    // Scope untuk surat aktif (diajukan atau disetujui)
+    public function scopeAktif($query)
+    {
+        return $query->whereIn('status_pengajuan', ['diajukan', 'disetujui']);
+    }
+
+    // Method untuk cek apakah masih bisa dicetak
+    public function masihBisaDicetak()
+    {
+        if ($this->status_pengajuan !== 'disetujui') {
+            return false;
+        }
+
+        // Cek batas waktu cetak
+        if ($this->cetak_sebelum_tanggal && now()->gt($this->cetak_sebelum_tanggal)) {
+            return false;
+        }
+
+        // Cek batas maksimal generate
+        if ($this->jumlah_sudah_digenerate >= $this->maksimal_generate_pdf) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // Method helper untuk get data tambahan
+    public function getDataTambahan($key = null)
+    {
+        if ($key) {
+            return $this->data_tambahan[$key] ?? null;
+        }
+        return $this->data_tambahan ?? [];
+    }
+
+    // Method helper untuk set data tambahan
+    public function setDataTambahan($key, $value)
+    {
+        $dataTambahan = $this->data_tambahan ?? [];
+        $dataTambahan[$key] = $value;
+        $this->data_tambahan = $dataTambahan;
     }
 }

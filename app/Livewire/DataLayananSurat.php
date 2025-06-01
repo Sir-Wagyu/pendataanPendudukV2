@@ -29,6 +29,7 @@ class DataLayananSurat extends Component
     public $isVerifikasiModal = false;
     public $isSetujuiMode = false;
     public $isTolakMode = false;
+    public $isBatalMode = false;
     public $isNotificationModal = false;
     public $isViewDetailModal = false;
 
@@ -140,6 +141,13 @@ class DataLayananSurat extends Component
         $this->isVerifikasiModal = true;
     }
 
+    public function openBatalModal($id)
+    {
+        $this->selectedSuratId = $id;
+        $this->isBatalMode = true;
+        $this->isVerifikasiModal = true;
+    }
+
     public function suratDisetujui()
     {
         $this->validate([
@@ -190,6 +198,23 @@ class DataLayananSurat extends Component
     {
         $this->isNotificationModal = false;
         session()->forget('message');
+    }
+
+    public function batalkanPengajuan()
+    {
+        $surat = layanan_surat::find($this->selectedSuratId);
+        if ($surat && $surat->status_pengajuan === 'diajukan') {
+            $surat->update([
+                'status_pengajuan' => 'dibatalkan',
+                'keperluan_surat' => 'Pengajuan surat dibatalkan oleh ' . Auth::user()->name,
+            ]);
+            session()->flash('message', [
+                'type' => 'success',
+                'title' => 'Pengajuan Surat Dibatalkan',
+                'description' => 'Pengajuan surat telah berhasil dibatalkan.'
+            ]);
+        }
+        $this->closeModal();
     }
 
 
@@ -261,7 +286,7 @@ class DataLayananSurat extends Component
         $jenisSuratMap = [
             'surat_keterangan_domisili' => 'SKD',
             'surat_pengantar_umum' => 'SPU',
-            'surat_keterangan_hilang_lokal' => 'SKHL',
+            'surat_keterangan_kehilangan_lokal' => 'SKHL',
             'surat_keterangan_untuk_sekolah_anak' => 'SKSA',
         ];
 
@@ -290,74 +315,5 @@ class DataLayananSurat extends Component
         $nomorSurat = "{$nomorUrut}/{$kodeJenisSurat}/{$kodeLingkungan}/{$bulanRom}/{$tahun}";
 
         return $nomorSurat;
-    }
-
-    public function cetakSurat($suratId)
-    {
-        $surat = layanan_surat::join('penduduk_pendatang', 'layanan_surat.id_penduduk_pendatang', '=', 'penduduk_pendatang.id')
-            ->join('users as pj', 'layanan_surat.id_penanggungJawab_pemohon', '=', 'pj.id') // <-- PERBAIKAN DI SINI
-            ->leftJoin('users as kl', 'layanan_surat.id_kepalaLingkungan_penyetuju', '=', 'kl.id') // <-- DISARANKAN MENGGUNAKAN leftJoin
-            ->where('layanan_surat.id', $suratId)
-            ->select(
-                'layanan_surat.*',
-                'penduduk_pendatang.nama_lengkap',
-                'penduduk_pendatang.nik',
-                'penduduk_pendatang.alamat_asal',
-                'penduduk_pendatang.telepon AS telepon_penduduk', // Memberi alias jika nama kolom 'telepon' ada juga di 'users'
-                'penduduk_pendatang.jenis_kelamin',
-                'penduduk_pendatang.tempat_lahir',
-                'penduduk_pendatang.tanggal_lahir',
-                'penduduk_pendatang.agama',
-                'penduduk_pendatang.status_perkawinan',
-                'pj.name as nama_penanggung_jawab',
-                // Jika Anda butuh data lain dari PJ, misalnya NIK atau telepon PJ:
-                // 'pj.nik as nik_penanggung_jawab',
-                // 'pj.telepon as telepon_penanggung_jawab',
-                'kl.name as nama_kepala_lingkungan'
-                // Jika Anda butuh data lain dari KL:
-                // 'kl.nik as nik_kepala_lingkungan'
-            )
-            ->first();
-
-        if (!$surat) {
-            session()->flash('message', [
-                'type' => 'error',
-                'title' => 'Gagal Cetak Surat',
-                'description' => 'Surat tidak ditemukan atau belum disetujui'
-            ]);
-            $this->isNotificationModal = true;
-            return;
-        }
-
-        // if (
-        //     $surat->jumlah_sudah_digenerate >= $surat->maksimal_generate_pdf ||
-        //     ($surat->cetak_sebelum_tanggal && now()->gt($surat->cetak_sebelum_tanggal))
-        // ) {
-        //     $surat->update([
-        //         'status_pengajuan' => 'selesai',
-        //     ]);
-        // }
-
-        if ($surat->cetak_sebelum_tanggal && now()->gt($surat->cetak_sebelum_tanggal)) {
-            session()->flash('message', [
-                'type' => 'error',
-                'title' => 'Batas Waktu Cetak Habis',
-                'description' => 'Surat sudah melewati batas waktu cetak yang ditentukan'
-            ]);
-            $this->isNotificationModal = true;
-            return;
-        }
-
-        if ($surat->jumlah_sudah_digenerate >= $surat->maksimal_generate_pdf) {
-            session()->flash('message', [
-                'type' => 'error',
-                'title' => 'Batas Generate Tercapai',
-                'description' => 'Surat sudah mencapai batas maksimal generate PDF. Silakan hubungi penanggung jawab untuk informasi lebih lanjut.'
-            ]);
-            $this->isNotificationModal = true;
-            return;
-        }
-
-        return redirect()->route('download.surat', $suratId);
     }
 }

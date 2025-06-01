@@ -1,88 +1,110 @@
 <div>
-    <h2 class="font-semibold text-xl text-warna-300 leading-tight mt-10 mb-6">
+    <div class="bg-white px-6 py-9 rounded-lg shadow-md">
+        <h2 class="font-semibold text-xl text-warna-300 leading-tight mb-5">
             Verifikasi Penduduk Pendatang
         </h2>
 
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-
-        <table
-        class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse border border-gray-200 bg-warna-100">
-            <thead class="text-xs text-warna-300 uppercase border-y-3 border-gray-200 ">
-                <tr>
-                    <th scope="col" class="px-5 py-2 md:px-10 md:py-3  whitespace-nowrap    ">
-                        No
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
-                        Nama Lengkap
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
-                        NIK
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Tanggal Masuk 
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Provinsi Asal
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Penanggung Jawab
-                    </th>
-                    <th scope="col" class="px-10 py-4  whitespace-nowrap ">
-                        Aksi
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @if ($penduduks->isNotEmpty())
-                    @foreach ($penduduks as $key => $data)
-                    <tr class="border-t-2 bg-white border-b text-warna-300 border-gray-200 xxl:hover:bg-gray-100">
-                        <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
-                            {{ $key + 1 }}
-                        </td>
-                        <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
-                            {{ $data->nama_lengkap }}
-                        </td>
-                        <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
-                            {{ $data->nik }}
-                        </td>
-                        <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
-                            {{ $data->tanggal_masuk }}
-                        </td>
-                        <td class="px-10 py-4 whitespace-nowrap">
-                            <span class="capitalize">{{ strtolower($provinsiNames[$data->provinsi_asal] ?? '-') }}</span>
-                        </td>
-                        <td class="px-10 py-4 whitespace-nowrap">
-                            {{ $penanggungJawabNames[$data->id_penanggungJawab] }}
-                        </td>
-                        <td class="px-10 py-3 whitespace-nowrap flex  gap-1">
-                                
-                                <button type="submit"  name="status_akun" wire:click="showPreviewModal({{ $data->id }})"  class="bg-warna-400 hover:bg-warna-400/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer" 
-                                data-tooltip-content="Lihat Detail Penduduk" data-tooltip-trigger="hover">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table
+            class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse border border-gray-200 bg-warna-100">
+                <thead class="text-xs text-warna-300 uppercase border-y-3 border-gray-200 ">
+                    <tr>
+                        <th scope="col" class="px-5 py-2 md:px-10 md:py-3  whitespace-nowrap    ">
+                            No
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
+                            Nama Lengkap
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap  ">
+                            NIK
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Tanggal Masuk 
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Provinsi Asal
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Penanggung Jawab
+                        </th>
+                        <th scope="col" class="px-10 py-4  whitespace-nowrap ">
+                            Aksi
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($penduduks->isNotEmpty())
+                        @foreach ($penduduks as $key => $data)
+                        <tr class="border-t-2 bg-white border-b text-warna-300 border-gray-200 xxl:hover:bg-gray-100">
+                            <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
+                                {{ $key + 1 }}
+                            </td>
+                            <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
+                                {{ $data->nama_lengkap }}
+                            </td>
+                            <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
+                                {{ $data->nik }}
+                            </td>
+                            <td class="px-10 py-4  whitespace-nowrap border-r border-warna-200">
+                                {{ $data->tanggal_masuk }}
+                            </td>
+                            <td class="px-10 py-4 whitespace-nowrap">
+                                <span class="capitalize">{{ strtolower($provinsiNames[$data->provinsi_asal] ?? '-') }}</span>
+                            </td>
+                            <td class="px-10 py-4 whitespace-nowrap">
+                                {{ $penanggungJawabNames[$data->id_penanggungJawab] }}
+                            </td>
+                            <td class="px-10 py-3 whitespace-nowrap flex  gap-1">
+                                    
+                                <button type="submit" id="tooltip-preview-{{ $data->id }}" name="status_akun" wire:click="showPreviewModal({{ $data->id }})"  class="bg-warna-400 hover:bg-warna-400/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer" 
+                                data-tooltip-target="tooltip-preview-content-{{ $data->id }}" data-tooltip-trigger="hover">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
-                                <button type="submit" wire:click="showTerimaModal({{ $data->id }})" name="status_akun" value="diterima" class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                <div id="tooltip-preview-content-{{ $data->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                    Lihat Detail Penduduk
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
+
+                                <button type="submit" id="tooltip-terima-{{ $data->id }}" wire:click="showTerimaModal({{ $data->id }})" name="status_akun" value="diterima" class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer"
+                                data-tooltip-target="tooltip-terima-content-{{ $data->id }}" data-tooltip-trigger="hover">
                                     <i class="fa-solid fa-check"></i>
                                 </button>
+                                <div id="tooltip-terima-content-{{ $data->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                    Terima Penduduk
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
 
-                                <button type="submit" wire:click="showAlasanPerbaikanModal({{ $data->id }})" name="status_akun" value="diterima" class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                <button type="submit" id="tooltip-perbaikan-{{ $data->id }}" wire:click="showAlasanPerbaikanModal({{ $data->id }})" name="status_akun" value="diterima" class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer"
+                                data-tooltip-target="tooltip-perbaikan-content-{{ $data->id }}" data-tooltip-trigger="hover">
                                     <i class="fa-solid fa-arrow-rotate-left"></i>
                                 </button>
-                                <button type="submit" wire:click="showAlasanModal({{ $data->id }})" name="status_akun" value="ditolak" class="bg-warna-800 hover:bg-warna-800/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer">
+                                <div id="tooltip-perbaikan-content-{{ $data->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                    Minta Perbaikan Data
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
+
+                                <button type="submit" id="tooltip-tolak-{{ $data->id }}" wire:click="showAlasanModal({{ $data->id }})" name="status_akun" value="ditolak" class="bg-warna-800 hover:bg-warna-800/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer"
+                                data-tooltip-target="tooltip-tolak-content-{{ $data->id }}" data-tooltip-trigger="hover">
                                     <i class="fa-solid fa-times"></i>
                                 </button>
+                                <div id="tooltip-tolak-content-{{ $data->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                    Tolak Penduduk
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </div>
                             </td>
-                    </tr>
-                @endforeach
-                @else
-                    <tr>
-                        <td colspan="7" class="text-center py-4 text-gray-500">
-                            Tidak ada data penduduk yang perlu diverifikasi.
-                        </td>
-                    </tr>
-                @endif
-            </tbody>
-        </table>
+                        </tr>
+                    @endforeach
+                    @else
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-gray-500">
+                                Tidak ada data penduduk yang perlu diverifikasi.
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </div>
+    </div>
         
 
         @if($isAlasanModal)
@@ -431,9 +453,6 @@
                 </x-modal>     
             </div>
         @endif
-        <h2 class="font-semibold text-xl text-warna-300 leading-tight mt-10 mb-6">
-            Verifikasi Pengajuan Surat
-        </h2>
 
         <script>
             const form = document.getElementById('verifikasiForm');

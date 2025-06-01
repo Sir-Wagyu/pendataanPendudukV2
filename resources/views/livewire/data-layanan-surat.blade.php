@@ -1,6 +1,6 @@
 <div>
     @if(Auth::user()->role == 'kepalaLingkungan')
-    <div>
+    <div class="bg-white p-5 rounded-lg shadow-md">
         <div class="w-full flex justify-between items-center py-3  mb-4">
             <h2 class="font-semibold text-xl text-warna-300 leading-tight">
                 Verifikasi Pengajuan Surat
@@ -8,7 +8,12 @@
         </div>
 
         <div class="mb-4 flex justify-between items-center">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari..." class="px-4 py-2 border border-gray-300 rounded-lg">
+            <x-g-input
+            type="text"
+            wire:model.live.debounce.300ms="search"
+            label="Cari Surat"
+            size="lg:w-1/2 xl:w-1/3"
+            />
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -113,15 +118,20 @@
     @endif
 
     <!-- full data preview -->
-    <div class="mt-20">
-        <div class="w-full flex justify-between items-center py-3  mb-4">
+    <div class="bg-white p-6 rounded-lg shadow-md {{ auth()->user()->role == 'kepalaLingkungan' ? 'mt-10' : 'mt-5' }}">
+        <div class="w-full flex justify-between items-center mb-8">
             <h2 class="font-semibold text-xl text-warna-300 leading-tight">
                 Data Pengajuan Surat
             </h2>
         </div>
 
         <div class="mb-4 flex justify-between items-center">
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari..." class="px-4 py-2 border border-gray-300 rounded-lg">
+            <x-g-input 
+            type="text"
+            wire:model.live.debounce.300ms="search"
+            label="Cari Surat"
+            size="lg:w-1/2 xl:w-1/3"
+            />
         </div>
 
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -152,24 +162,24 @@
                                     <td class="px-5 py-2 md:px-10 md:py-3 whitespace-nowrap">{{ $loop->iteration }}</td>
                                     <td class="px-10 py-4 whitespace-nowrap">
                                         @if($surat->status_pengajuan == 'diajukan')
-                                            <div class="p-2 bg-warna-700 rounded-full text-xs font-semibold">
+                                            <div class="px-4 py-2 bg-warna-700 rounded-full text-xs font-semibold">
                                                 <p class="text-white font-semibold text-center">Diproses</p>
                                             </div>
                                         @elseif($surat->status_pengajuan == 'ditolak')
-                                            <div class="p-2 bg-warna-800 rounded-full text-xs font-semibold">
+                                            <div class="px-4 py-2 bg-warna-800 rounded-full text-xs font-semibold">
                                                 <p class="text-white font-semibold text-center">Ditolak</p>
                                             </div>
                                         @elseif($surat->status_pengajuan == 'disetujui')
-                                            <div class="p-2 bg-warna-500 rounded-full text-xs font-semibold">
+                                            <div class="px-4 py-2 bg-warna-500 rounded-full text-xs font-semibold">
                                                 <p class="text-white font-semibold text-center">Disetujui</p>
                                             </div>
                                         @elseif($surat->status_pengajuan == 'selesai')
-                                            <div class="p-2 border-2 border-warna-600 rounded-full text-xs font-semibold">
+                                            <div class="px-4 py-2 border-2 border-warna-600 rounded-full text-xs font-semibold">
                                                 <p class="text-white font-semibold text-center">Selesai</p>
                                             </div>
-                                        @else
-                                            <div class="p-2 border-2 border-warna-300 rounded-full text-xs font-semibold">
-                                                <p class="text-white font-semibold text-center">Tidak Diketahui</p>
+                                        @elseif($surat->status_pengajuan == 'dibatalkan')
+                                            <div class="px-4 py-2 border-2 border-warna-300 rounded-full text-xs font-semibold">
+                                                <p class="text-warna-300 font-semibold text-center">Dibatalkan</p>
                                             </div>
                                         @endif
                                     </td>
@@ -221,7 +231,7 @@
                                                 data-tooltip-target='tooltip-batal-{{ $surat->id }}' 
                                                 data-tooltip-placement="bottom" 
                                                 type="button"
-                                                wire:click="openCatatanPengajuanModal({{ $surat->id }})" 
+                                                wire:click="openBatalModal({{ $surat->id }})" 
                                                 class="bg-warna-800 hover:bg-warna-800/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer ml-1">
                                                 <i class="fa-solid fa-xmark"></i>
                                             </button>
@@ -289,9 +299,9 @@
                                             <div class="px-4 py-2 border-2 border-warna-500 rounded-full text-xs font-semibold">
                                                 <p class="text-warna-500 font-semibold text-center">Selesai</p>
                                             </div>
-                                        @else
+                                        @elseif($surat->status_pengajuan == 'dibatalkan')
                                             <div class="px-4 py-2 border-2 border-warna-300 rounded-full text-xs font-semibold">
-                                                <p class="text-white font-semibold text-center">Tidak Diketahui</p>
+                                                <p class="text-warna-300 font-semibold text-center">Dibatalkan</p>
                                             </div>
                                         @endif
                                     </td>
@@ -305,15 +315,18 @@
                                             <i class="fa-solid fa-eye"></i>
                                             
                                         </button>
-                                        
-                                        <button 
-                                            data-tooltip-target='tooltip-cetak-{{ $surat->id }}' 
-                                            data-tooltip-placement="bottom" 
-                                            type="button"
-                                            wire:click="cetakSurat({{ $surat->id }})" 
-                                            class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer ml-1">
-                                            <i class="fa-solid fa-print"></i>
-                                        </button>
+                                        @if($surat->status_pengajuan == 'disetujui')
+                                            <a 
+                                                href="{{ route('cetak.surat', $surat->id) }}"
+                                                target="_blank" 
+                                                data-tooltip-target='tooltip-cetak-{{ $surat->id }}' 
+                                                data-tooltip-placement="bottom" 
+                                                type="button"
+                                                class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer ml-1">
+                                                <i class="fa-solid fa-print"></i>
+                                            </a>
+                                            
+                                        @endif
                                     </td>
                                     <div id="tooltip-cetak-{{ $surat->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
                                         <p>Cetak Surat</p>
@@ -321,6 +334,10 @@
                                     </div>
                                     <div id="tooltip-view-{{ $surat->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
                                         <p>Lihat Detail Pengajuan</p>
+                                        <div class="tooltip-arrow" data-popper-arrow></div>
+                                    </div>
+                                    <div id="tooltip-previewSurat-{{ $surat->id }}" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-xs font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-xs opacity-0 tooltip dark:bg-gray-700">
+                                        <p>Preview Surat</p>
                                         <div class="tooltip-arrow" data-popper-arrow></div>
                                     </div>
                                 </tr>
@@ -381,12 +398,12 @@
                             </div>
 
                             <div class="mt-6 md:mt-7 relative">
-                                <label class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Alasan Pengajuan</label>
+                                <label class="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-warna-400 peer-focus:dark:text-indigo-400 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 left-3">Keterangan Tambahan</label>
                                 <textarea 
                                     wire:model="catatan_kepalaLingkungan" 
                                     class="block w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-warna-400 focus:border-warna-400 sm:text-sm peer" 
                                     rows="3" 
-                                    placeholder="Masukkan alasan pengajuan surat">
+                                    placeholder="Masukkan keterangan tambahan">
                                 </textarea>
                             </div>
                             <div class="mt-4 md:mt-5 text-left text-xs md:text-sm w-full hidden md:block bg-amber-200/50 text-yellow-700 px-4 py-2 rounded-lg mb-4">
@@ -416,7 +433,7 @@
                         </button>
                     </div>
                 </form>
-            @else
+            @elseif($isTolakModal)
                 <div class="flex flex-col w-full items-center mt-5 lg:mt-7 xl:mt-14 mb-8 lg:mb-10">
                     <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">
                         Verifikasi Penolakan Surat Ajuan
@@ -454,6 +471,33 @@
                         Ya
                     </button>
                 </div>
+            @elseif($isBatalMode)
+                <div class="flex flex-col w-full items-center mt-5 lg:mt-7 xl:mt-14 mb-8 lg:mb-10">
+                    <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">
+                        Pembatalan Pengajuan Surat
+                    </h2>
+                    <p class="text-center w-3/4 hidden md:block">
+                        Apakah Anda yakin ingin membatalkan pengajuan surat ini?
+                    </p>
+                    
+                </div>
+                
+                <div class="flex justify-center w-[90%] ">
+                    <button 
+                        type="button" 
+                        wire:click="closeModal" 
+                        class="mr-2 bg-gray-300 hover:bg-gray-300/90 active:scale-95 transition-all text-warna-300 w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer"
+                    >
+                        Batal
+                    </button>
+                    <button 
+                        type="button" 
+                        wire:click="batalkanPengajuan"
+                        class="bg-warna-800 hover:bg-warna-800/90 active:scale-95 transition-all text-white w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer"
+                    >
+                        Ya
+                    </button>
+                </div>
             @endif
         </x-modal>
     </div>
@@ -483,13 +527,10 @@
             </div>
             <div class="w-[90%]">
                 <div class="max-h-[45dvh] md:max-h-[50dvh] overflow-y-auto pr-2 w-full">
-                    @if(auth()->user()->role == 'kepalaLingkungan' || auth()->user()->role == 'admin')
-                        <div class="w-full mb-6">
-                            <p class="text-sm md:text-base text-gray-500">Nomor Surat:</p>
-                            <p class="text-sm md:text-base font-semibold">{{ $nomor_surat_terbitan ?? 'Belum diterbitkan' }}</p>
-                        </div>
-                    @endif
-                    
+                    <div class="w-full mb-6">
+                        <p class="text-sm md:text-base text-gray-500">Nomor Surat:</p>
+                        <p class="text-sm md:text-base font-semibold">{{ $nomor_surat_terbitan ?? 'Belum diterbitkan' }}</p>
+                    </div>
                     <div class="w-full flex flex-col md:flex-row gap-4">
                         <div class="w-full md:w-1/2">
                             <div class="w-full mb-3">

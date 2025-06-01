@@ -168,6 +168,7 @@ class DataVerifikasiPenduduk extends Component
         $penduduk = penduduk_pendatang::find($this->selectedId);
         $penduduk->status_akun = 'diterima';
         $penduduk->alasan_penolakan = '';
+        $penduduk->tanggal_verifikasi = now();
         $penduduk->save();
 
         session()->flash('message', [
