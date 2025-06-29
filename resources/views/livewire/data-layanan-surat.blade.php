@@ -175,7 +175,7 @@
                                             </div>
                                         @elseif($surat->status_pengajuan == 'selesai')
                                             <div class="px-4 py-2 border-2 border-warna-600 rounded-full text-xs font-semibold">
-                                                <p class="text-white font-semibold text-center">Selesai</p>
+                                                <p class="text-warna-600 font-semibold text-center">Selesai</p>
                                             </div>
                                         @elseif($surat->status_pengajuan == 'dibatalkan')
                                             <div class="px-4 py-2 border-2 border-warna-300 rounded-full text-xs font-semibold">
@@ -203,9 +203,10 @@
                                             class="bg-warna-400 hover:bg-warna-400/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer ml-1">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
-                                        
+
+                                
                                         {{-- Aksi sesuai kebutuhan --}}
-                                        @if($surat->status_pengajuan == 'disetujui')
+                                        @if($surat->status_pengajuan == 'disetujui' || $surat->status_pengajuan == 'selesai')
                                             @if($surat->cetak_sebelum_tanggal && \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($surat->cetak_sebelum_tanggal)))
                                                 <button 
                                                     data-tooltip-target='tooltip-cetak-{{ $surat->id }}' 
@@ -217,14 +218,14 @@
                                                     <i class="fa-solid fa-print"></i>
                                                 </button>
                                             @else
-                                                <button 
+                                                <a 
                                                     data-tooltip-target='tooltip-cetak-{{ $surat->id }}' 
                                                     data-tooltip-placement="bottom" 
                                                     type="button"
-                                                    wire:click="cetakSurat({{ $surat->id }})" 
+                                                    href="{{ route('cetak.surat', $surat->id) }}"
                                                     class="bg-warna-500 hover:bg-warna-500/80 active:scale-95 transition-all text-white px-4 py-2 rounded-lg cursor-pointer ml-1">
                                                     <i class="fa-solid fa-print"></i>
-                                                </button>
+                                                </a>
                                             @endif
                                         @elseif($surat->status_pengajuan == 'diajukan')
                                             <button 
@@ -315,7 +316,7 @@
                                             <i class="fa-solid fa-eye"></i>
                                             
                                         </button>
-                                        @if($surat->status_pengajuan == 'disetujui')
+                                        @if($surat->status_pengajuan == 'disetujui' || $surat->status_pengajuan == 'selesai')
                                             <a 
                                                 href="{{ route('cetak.surat', $surat->id) }}"
                                                 target="_blank" 
@@ -433,7 +434,7 @@
                         </button>
                     </div>
                 </form>
-            @elseif($isTolakModal)
+            @elseif($isTolakMode)
                 <div class="flex flex-col w-full items-center mt-5 lg:mt-7 xl:mt-14 mb-8 lg:mb-10">
                     <h2 class="text-lg md:text-xl xl:text-2xl text-center font-bold mb-1 md:mb-2">
                         Verifikasi Penolakan Surat Ajuan
@@ -465,10 +466,15 @@
                     </button>
                     <button 
                         type="button" 
-                        wire:click=""
-                        class="bg-warna-800 hover:bg-warna-800/90 active:scale-95 transition-all text-white w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer"
+                        wire:click="tolakPengajuan"
+                        wire:loading.attr="disabled"
+                        wire:loading.class="opacity-50 cursor-not-allowed"
+                        class="bg-warna-800 hover:bg-warna-800/90 active:scale-95 transition-all text-white w-1/2 px-7 py-2 md:py-3 rounded-lg cursor-pointer disabled:hover:bg-warna-800"
                     >
-                        Ya
+                        <span wire:loading.remove wire:target="tolakPengajuan">Ya</span>
+                        <span wire:loading wire:target="tolakPengajuan" class="flex items-center justify-center">
+                            Memproses...
+                        </span>
                     </button>
                 </div>
             @elseif($isBatalMode)

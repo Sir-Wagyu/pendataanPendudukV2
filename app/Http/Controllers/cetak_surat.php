@@ -19,7 +19,7 @@ class cetak_surat extends Controller
                 ->join('users as pj', 'layanan_surat.id_penanggungJawab_pemohon', '=', 'pj.id')
                 ->leftJoin('users as kl', 'layanan_surat.id_kepalaLingkungan_penyetuju', '=', 'kl.id')
                 ->where('layanan_surat.id', $id)
-                ->where('layanan_surat.status_pengajuan', 'disetujui')
+                ->whereIn('layanan_surat.status_pengajuan', ['disetujui', 'selesai'])
                 ->select(
                     'layanan_surat.*',
                     'penduduk_pendatang.nama_lengkap',
@@ -75,6 +75,20 @@ class cetak_surat extends Controller
                         $surat_model->update(['tanggal_surat_dicetak_pertama' => now()]);
                     }
                 }
+
+                // Update status menjadi selesai jika status masih disetujui
+                if ($surat_model->status_pengajuan == 'disetujui') {
+                    $surat_model->update([
+                        'status_pengajuan' => 'selesai',
+                        'tanggal_selesai' => now() // Optional: tambah field ini jika diperlukan
+                    ]);
+
+                    Log::info("Surat ID {$id} status diupdate menjadi selesai setelah dicetak oleh user " . Auth::id());
+                }
+            }
+
+            if ($surat_model->status_pengajuan == 'disetujui') {
+                $surat_model->update(['status_pengajuan' => 'selesai']);
             }
 
             $fileName = $this->generateFileName($surat);

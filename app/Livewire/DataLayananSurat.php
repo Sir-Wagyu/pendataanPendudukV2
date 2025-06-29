@@ -217,6 +217,27 @@ class DataLayananSurat extends Component
         $this->closeModal();
     }
 
+    public function tolakPengajuan()
+    {
+        $this->validate([
+            'catatan_kepalaLingkungan' => 'required|max:500'
+        ]);
+
+        $surat = layanan_surat::find($this->selectedSuratId);
+        if ($surat && $surat->status_pengajuan === 'diajukan') {
+            $surat->update([
+                'status_pengajuan' => 'ditolak',
+                'catatan_kepalaLingkungan' => $this->catatan_kepalaLingkungan,
+            ]);
+            session()->flash('message', [
+                'type' => 'success',
+                'title' => 'Pengajuan Surat Ditolak',
+                'description' => 'Pengajuan surat telah berhasil ditolak.'
+            ]);
+        }
+        $this->closeModal();
+    }
+
 
     public function openViewDetailModal($suratId)
     {

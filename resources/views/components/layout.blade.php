@@ -44,8 +44,6 @@
                     
                     <i id="avatarButton" data-dropdown-toggle="userDropdown" class="mr-4 fa-solid fa-circle-user text-4xl cursor-pointer text-warna-300 active:scale-95 transition-all hover:text-warna-400"></i>
 
-                    
-
                     <!-- Dropdown menu -->
                     <div id="userDropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44 ">
                         <div class="px-4 py-3 text-sm text-gray-900 ">
