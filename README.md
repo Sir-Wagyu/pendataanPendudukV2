@@ -1,66 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIDUKTANG - Sistem Informasi Manajemen Penduduk Pendatang
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+SIDUKTANG adalah sistem informasi berbasis web yang dirancang untuk mengelola data penduduk pendatang di suatu wilayah. Sistem ini bertujuan untuk memodernisasi dan mengefisiensikan proses pendataan, verifikasi, dan pelaporan data penduduk, serta menyediakan layanan surat-menyurat bagi penduduk yang terdaftar.
 
-## About Laravel
+## Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   **Otentikasi Pengguna:** Sistem *login* dan *register* yang aman untuk berbagai level pengguna.
+-   **Manajemen Pengguna:**
+    -   **Admin:** Memiliki hak akses penuh untuk mengelola semua data, termasuk verifikasi akun baru.
+    -   **Kepala Lingkungan:** Dapat memverifikasi data penduduk pendatang yang masuk ke wilayahnya dan menyetujui pengajuan surat.
+    -   **Penanggung Jawab:** Dapat mendaftarkan dan mengelola data penduduk pendatang yang menjadi tanggungannya.
+-   **Manajemen Data Penduduk:**
+    -   Pendaftaran penduduk pendatang baru dengan data yang lengkap, termasuk data diri, alamat asal, alamat sekarang, dan foto KTP.
+    -   Proses verifikasi data penduduk oleh Kepala Lingkungan.
+    -   Pencatatan penduduk yang keluar atau pindah.
+-   **Layanan Surat:**
+    -   Pengajuan berbagai jenis surat oleh penduduk melalui penanggung jawab, seperti:
+        -   Surat Keterangan Domisili
+        -   Surat Pengantar Umum
+        -   Surat Pengantar SKCK
+        -   Surat Keterangan Kehilangan Lokal
+        -   Surat Keterangan Untuk Sekolah Anak
+    -   Proses persetujuan pengajuan surat oleh Kepala Lingkungan.
+    -   *Generate* dan unduh surat dalam format PDF.
+-   **Pelaporan:**
+    -   *Dashboard* dengan statistik ringkas mengenai jumlah akun, penduduk, dan pengajuan surat.
+    -   Fitur *export* data penduduk dan layanan surat ke dalam format CSV dan Excel.
+    -   Peta sebaran lokasi penduduk.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Teknologi yang Digunakan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   **Backend:** Laravel 11
+-   **Frontend:**
+    -   Blade
+    -   Livewire
+    -   Tailwind CSS
+    -   Font Awesome
+    -   Flowbite
+-   **Database:** MySQL
+-   **Pustaka Lainnya:**
+    -   Spatie Laravel PDF
+    -   Maatwebsite Excel
 
-## Learning Laravel
+## Peran Pengguna (Roles)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1.  **Admin:**
+    -   Memverifikasi akun baru (Kepala Lingkungan dan Penanggung Jawab).
+    -   Mengelola semua data pengguna dan data master.
+    -   Melihat semua data penduduk dan laporan.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2.  **Kepala Lingkungan:**
+    -   Memverifikasi data penduduk pendatang baru yang didaftarkan oleh Penanggung Jawab.
+    -   Menyetujui atau menolak pengajuan surat dari penduduk.
+    -   Melihat data penduduk dan laporan di wilayahnya.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3.  **Penanggung Jawab:**
+    -   Mendaftarkan data penduduk pendatang yang menjadi tanggungannya.
+    -   Mengajukan surat untuk penduduk yang didaftarkan.
+    -   Melihat data penduduk yang didaftarkannya.
 
-## Laravel Sponsors
+## Alur Kerja Sistem
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1.  **Registrasi Akun:** Calon pengguna (Kepala Lingkungan atau Penanggung Jawab) melakukan registrasi.
+2.  **Verifikasi Akun:** Admin memverifikasi dan menyetujui akun baru. *Password* sementara akan dikirimkan ke *email* pendaftar.
+3.  **Login Pertama:** Pengguna *login* menggunakan *username* dan *password* sementara, kemudian sistem akan mewajibkan pengguna untuk mengubah *password* dan mengatur lokasi mereka.
+4.  **Pendaftaran Penduduk:** Penanggung Jawab mendaftarkan data penduduk pendatang baru.
+5.  **Verifikasi Penduduk:** Kepala Lingkungan memverifikasi data penduduk baru.
+6.  **Pengajuan Surat:** Penanggung Jawab dapat mengajukan surat untuk penduduk yang sudah terverifikasi.
+7.  **Persetujuan Surat:** Kepala Lingkungan menyetujui atau menolak pengajuan surat.
+8.  **Cetak Surat:** Penanggung Jawab dapat mengunduh surat yang telah disetujui dalam format PDF.
